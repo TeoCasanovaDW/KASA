@@ -2,3 +2,5 @@
 .claude/
 CLAUDE.md
 specs/
+
+backend/data/kasa.sqlite3
