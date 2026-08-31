@@ -36,14 +36,14 @@ Le serveur est écrit avec Express 5 et persiste les données dans un fichier SQ
    - npm install
 2. Lancer le serveur:
    - npm start
-3. Le serveur écoute par défaut sur http://localhost:3000 (configurable via PORT).
+3. Le serveur écoute par défaut sur http://localhost:4000 (configurable via PORT).
 
 ## Configuration (variables d’environnement)
-- PORT: port d’écoute HTTP (par défaut 3000).
+- PORT: port d’écoute HTTP (par défaut 4000).
 - JWT_SECRET: secret pour signer/vérifier les tokens JWT (par défaut "change-me-in-prod"). En production, définissez une valeur forte et secrète.
 
 Vous pouvez lancer le serveur avec, par exemple:
-- JWT_SECRET="votre-secret" PORT=3000 npm start
+- JWT_SECRET="votre-secret" PORT=4000 npm start
 
 ## Base de données & données de démo
 - SGBD: SQLite, fichier: data/kasa.sqlite3
@@ -55,7 +55,7 @@ Sauvegarde: le fichier SQLite (data/kasa.sqlite3) est persistant. Pour repartir 
 
 ## Documentation API (OpenAPI)
 - Spécification: public/openapi.json
-- UI de test/exploration: http://localhost:3000/docs.html (après démarrage)
+- UI de test/exploration: http://localhost:4000/docs.html (après démarrage)
 
 Les endpoints sont groupés par tags: Auth, Properties, Users, Ratings, Favorites, Uploads. Les schémas de requête/réponse sont détaillés dans la spec.
 
@@ -103,23 +103,23 @@ Base: /api
 
 ## Exemples rapides (curl)
 Authentification (login):
-- curl -s -X POST http://localhost:3000/auth/login -H 'Content-Type: application/json' -d '{"email":"alice@example.com","password":"secret123"}'
+- curl -s -X POST http://localhost:4000/auth/login -H 'Content-Type: application/json' -d '{"email":"alice@example.com","password":"secret123"}'
 
 Uploader une image (nécessite un token et un rôle owner/admin):
-- curl -s -X POST http://localhost:3000/api/uploads/image \
+- curl -s -X POST http://localhost:4000/api/uploads/image \
   -H "Authorization: Bearer $TOKEN" \
   -F file=@/chemin/vers/image.jpg \
   -F purpose=property-cover \
   -F property_id=chez-alice
 
 Supprimer des images (par URL):
-- curl -s -X DELETE http://localhost:3000/api/uploads/images \
+- curl -s -X DELETE http://localhost:4000/api/uploads/images \
   -H 'Authorization: Bearer $TOKEN' \
   -H 'Content-Type: application/json' \
   -d '{"urls":["/uploads/1692971234-a1b2c3d4.jpg","/uploads/1692971299-ffeedd.png"]}'
 
 Créer une propriété (owner/admin):
-- curl -s -X POST http://localhost:3000/api/properties \
+- curl -s -X POST http://localhost:4000/api/properties \
   -H 'Authorization: Bearer $TOKEN' \
   -H 'Content-Type: application/json' \
   -d '{"title":"Charmant Studio","host_id":1,"price_per_night":95}'

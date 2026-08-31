@@ -7,7 +7,7 @@
   },
   "servers": [
     { "url": "/", "description": "Relative server (use current host)" },
-    { "url": "http://localhost:3000", "description": "Local development" }
+    { "url": "http://localhost:4000", "description": "Local development" }
   ],
   "tags": [
     { "name": "Auth" },
