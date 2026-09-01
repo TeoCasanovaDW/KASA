@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Container from "@/components/layout/Container";
+import about01 from "@/public/images/about_01.png";
+import about02 from "@/public/images/about_02.png";
 
 export const metadata: Metadata = {
   title: "À propos",
@@ -22,11 +25,10 @@ export default function AProposPage() {
         partager leur région et leurs bonnes adresses.
       </p>
 
-      {/* eslint-disable-next-line @next/next/no-img-element -- plain <img>: next/image setup is out of scope until 04-home-properties.md */}
-      <img
-        src="/images/about_01.png"
+      <Image
+        src={about01}
         alt="Maison en bois entourée d'arbres"
-        className="mt-11 w-full rounded-xl object-cover"
+        className="mt-11 h-auto w-full rounded-xl object-cover"
       />
 
       <div className="mt-10 grid gap-6 md:grid-cols-2 md:items-center md:gap-8">
@@ -49,11 +51,10 @@ export default function AProposPage() {
           </p>
         </div>
 
-        {/* eslint-disable-next-line @next/next/no-img-element -- plain <img>: next/image setup is out of scope until 04-home-properties.md */}
-        <img
-          src="/images/about_02.png"
+        <Image
+          src={about02}
           alt="Chalet en bois avec une grande baie vitrée"
-          className="w-full rounded-xl object-cover"
+          className="h-auto w-full rounded-xl object-cover"
         />
       </div>
     </Container>

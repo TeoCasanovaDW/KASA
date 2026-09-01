@@ -3,7 +3,7 @@ import Logo from "@/components/layout/Logo";
 
 export default function Footer() {
   return (
-    <footer className="bg-kasa-white">
+    <footer className="bg-kasa-white shadow-[0_-2px_6px_rgba(0,0,0,0.05)]">
       <Container className="flex flex-col items-center justify-between gap-4 py-8 md:flex-row">
         <Logo variant="icon" />
         <p className="text-xs text-kasa-gray-dark">
