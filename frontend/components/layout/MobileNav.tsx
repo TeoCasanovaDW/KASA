@@ -6,7 +6,11 @@ import Logo from "@/components/layout/Logo";
 
 const FOCUSABLE_SELECTOR = "a[href], button:not([disabled])";
 
-export default function MobileNav() {
+export default function MobileNav({
+  authSlot,
+}: {
+  authSlot: React.ReactNode;
+}) {
   const [open, setOpen] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
   const firstLinkRef = useRef<HTMLAnchorElement>(null);
@@ -92,9 +96,10 @@ export default function MobileNav() {
             <Link href="/favoris" onClick={close}>
               Favoris
             </Link>
-            <Link href="/connexion" onClick={close}>
-              Se connecter
-            </Link>
+            {/* Server-rendered auth state; the wrapper keeps this slot's
+                previous close-on-click behavior, which its content cannot
+                reach from the server. */}
+            <div onClick={close}>{authSlot}</div>
             <Link
               href="/ajouter-un-logement"
               onClick={close}

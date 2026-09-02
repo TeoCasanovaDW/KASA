@@ -1,4 +1,5 @@
 import Link from "next/link";
+import HeaderAuth from "@/components/auth/HeaderAuth";
 import Container from "@/components/layout/Container";
 import Logo from "@/components/layout/Logo";
 import MobileNav from "@/components/layout/MobileNav";
@@ -39,13 +40,13 @@ export default function Header() {
               </Link>
             </div>
 
-            <Link href="/connexion">Se connecter</Link>
+            <HeaderAuth variant="desktop" />
           </div>
         </nav>
 
         <div className="flex items-center justify-between py-4 md:hidden">
           <Logo variant="icon" />
-          <MobileNav />
+          <MobileNav authSlot={<HeaderAuth variant="mobile" />} />
         </div>
       </Container>
     </header>
