@@ -30,6 +30,10 @@ export default function Header() {
               <Link href="/favoris" aria-label="Favoris">
                 <HeartIcon />
               </Link>
+              <span
+                aria-hidden="true"
+                className="h-2 w-0.5 bg-kasa-red"
+              />
               <Link href="/messagerie" aria-label="Messagerie">
                 <MessageIcon />
               </Link>
@@ -79,7 +83,7 @@ function MessageIcon() {
       strokeLinejoin="round"
       className="h-5 w-5 text-kasa-red"
     >
-      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+      <path d="M4 4h16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H10l-4 4v-4H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" />
     </svg>
   );
 }

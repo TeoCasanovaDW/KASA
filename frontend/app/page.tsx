@@ -2,6 +2,7 @@ import Container from "@/components/layout/Container";
 import HomeHero from "@/components/home/HomeHero";
 import HowItWorks from "@/components/home/HowItWorks";
 import PropertyCard from "@/components/property/PropertyCard";
+import FavoriteButton from "@/components/favorites/FavoriteButton";
 import { getProperties } from "@/lib/properties";
 import { ApiError } from "@/lib/api-client";
 import type { Property } from "@/types/property";
@@ -35,7 +36,10 @@ export default async function Home() {
         <ul className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {properties.map((property) => (
             <li key={property.id}>
-              <PropertyCard property={property} />
+              <PropertyCard
+                property={property}
+                favoriteControl={<FavoriteButton propertyId={property.id} />}
+              />
             </li>
           ))}
         </ul>
