@@ -16,7 +16,8 @@ export type Property = {
   price_per_night: number;
   rating_avg: number;
   ratings_count: number;
-  host: PropertyHost;
+  // The backend omits the key entirely when `host_id` is null.
+  host?: PropertyHost;
 };
 
 export type PropertyDetail = Property & {

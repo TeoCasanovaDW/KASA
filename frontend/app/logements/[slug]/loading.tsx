@@ -19,7 +19,7 @@ export default function Loading() {
               ))}
             </div>
 
-            <div className="mt-6 rounded-2xl bg-kasa-white p-6 shadow-sm">
+            <div className="mt-6 rounded-2xl bg-kasa-white p-6 shadow-sm md:p-8">
               <div className="h-6 w-2/3 rounded motion-safe:animate-pulse bg-kasa-gray-light" />
               <div className="mt-3 h-4 w-1/3 rounded motion-safe:animate-pulse bg-kasa-gray-light" />
               <div className="mt-2 h-4 w-1/4 rounded motion-safe:animate-pulse bg-kasa-gray-light" />
