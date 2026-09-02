@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import Container from "@/components/layout/Container";
@@ -8,6 +9,60 @@ import PropertyInfo from "@/components/property/PropertyInfo";
 import { ApiError } from "@/lib/api-client";
 import { getPropertyBySlug } from "@/lib/properties";
 import type { PropertyDetail } from "@/types/property";
+
+const FALLBACK_DESCRIPTION = "Découvrez ce logement sur Kasa.";
+const DESCRIPTION_MAX_LENGTH = 160;
+
+// Trims to ~160 characters at a word boundary, so meta descriptions never
+// cut a word in half.
+function truncateDescription(description: string): string {
+  if (description.length <= DESCRIPTION_MAX_LENGTH) {
+    return description;
+  }
+
+  const truncated = description.slice(0, DESCRIPTION_MAX_LENGTH);
+  const lastSpace = truncated.lastIndexOf(" ");
+
+  return `${truncated.slice(0, lastSpace > 0 ? lastSpace : DESCRIPTION_MAX_LENGTH)}…`;
+}
+
+export async function generateMetadata({
+  params,
+}: PageProps<"/logements/[slug]">): Promise<Metadata> {
+  const { slug } = await params;
+
+  let property: PropertyDetail | null = null;
+  let loadFailed = false;
+
+  try {
+    property = await getPropertyBySlug(slug);
+  } catch (error) {
+    if (error instanceof ApiError) {
+      loadFailed = true;
+    } else {
+      throw error;
+    }
+  }
+
+  if (loadFailed || !property) {
+    return { title: "Logement — Kasa" };
+  }
+
+  const title = `${property.title} — Kasa`;
+  const description = property.description
+    ? truncateDescription(property.description)
+    : FALLBACK_DESCRIPTION;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: property.cover ? [property.cover] : undefined,
+    },
+  };
+}
 
 function BackLink() {
   return (
