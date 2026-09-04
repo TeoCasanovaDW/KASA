@@ -99,6 +99,22 @@ async function initSchema(db) {
   CREATE INDEX IF NOT EXISTS idx_properties_host ON properties(host_id);
   CREATE INDEX IF NOT EXISTS idx_ratings_property ON ratings(property_id);
   CREATE INDEX IF NOT EXISTS idx_ratings_user ON ratings(user_id);
+
+  CREATE TABLE IF NOT EXISTS messages (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    sender_id INTEGER NOT NULL,
+    recipient_id INTEGER NOT NULL,
+    property_id TEXT,
+    body TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    read_at DATETIME,
+    FOREIGN KEY(sender_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY(recipient_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY(property_id) REFERENCES properties(id) ON DELETE SET NULL
+  );
+
+  CREATE INDEX IF NOT EXISTS idx_messages_pair ON messages(sender_id, recipient_id, created_at);
+  CREATE INDEX IF NOT EXISTS idx_messages_recipient ON messages(recipient_id, read_at);
   `;
 
   await db.execAsync(schema);
