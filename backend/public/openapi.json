@@ -15,6 +15,7 @@
     { "name": "Users" },
     { "name": "Ratings" },
     { "name": "Favorites" },
+    { "name": "Messages" },
     { "name": "Uploads" }
   ],
   "paths": {
@@ -296,6 +297,72 @@
         }
       }
     },
+    "/api/messages": {
+      "get": {
+        "tags": ["Messages"],
+        "summary": "List conversations for the current user (most recent first)",
+        "security": [ { "BearerAuth": [] } ],
+        "responses": {
+          "200": { "description": "Conversation list, one entry per participant", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/ThreadSummary" } } } } },
+          "401": { "description": "Authentication required", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
+      },
+      "post": {
+        "tags": ["Messages"],
+        "summary": "Send a message to another user",
+        "security": [ { "BearerAuth": [] } ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "recipient_id": { "type": "integer" },
+                  "body": { "type": "string" },
+                  "property_id": { "type": "string", "nullable": true, "description": "Optional property this message relates to" }
+                },
+                "required": ["recipient_id", "body"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Message created", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Message" } } } },
+          "400": { "description": "recipient_id and body are required, or cannot message yourself", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+          "401": { "description": "Authentication required", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+          "404": { "description": "User or Property not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
+      }
+    },
+    "/api/messages/{userId}": {
+      "get": {
+        "tags": ["Messages"],
+        "summary": "Get the message thread with a user, oldest first (read-only, never marks messages as read)",
+        "security": [ { "BearerAuth": [] } ],
+        "parameters": [ { "name": "userId", "in": "path", "required": true, "schema": { "type": "integer" } } ],
+        "responses": {
+          "200": { "description": "Thread history (empty messages array when the pair has no history)", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MessageThread" } } } },
+          "400": { "description": "invalid user id", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+          "401": { "description": "Authentication required", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+          "404": { "description": "User not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
+      }
+    },
+    "/api/messages/{userId}/read": {
+      "patch": {
+        "tags": ["Messages"],
+        "summary": "Mark every message from :userId to the current user as read (idempotent; the only way unread state changes)",
+        "security": [ { "BearerAuth": [] } ],
+        "parameters": [ { "name": "userId", "in": "path", "required": true, "schema": { "type": "integer" } } ],
+        "responses": {
+          "200": { "description": "Number of messages marked read (0 on a repeat call)", "content": { "application/json": { "schema": { "type": "object", "properties": { "ok": { "type": "boolean", "example": true }, "updated": { "type": "integer" } }, "required": ["ok", "updated"] } } } },
+          "400": { "description": "invalid user id", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+          "401": { "description": "Authentication required", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+          "404": { "description": "User not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
+      }
+    },
     "/api/uploads/image": {
       "post": {
         "tags": ["Uploads"],
@@ -535,6 +602,71 @@
           "ratings": { "type": "array", "items": { "$ref": "#/components/schemas/Rating" } }
         },
         "required": ["rating_avg", "ratings_count", "ratings"]
+      },
+      "Message": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "sender_id": { "type": "integer" },
+          "recipient_id": { "type": "integer" },
+          "body": { "type": "string" },
+          "created_at": { "type": "string", "format": "date-time" },
+          "read_at": { "type": "string", "format": "date-time", "nullable": true }
+        },
+        "required": ["id", "sender_id", "recipient_id", "body", "created_at"]
+      },
+      "MessageThread": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "integer" },
+              "name": { "type": "string" },
+              "picture": { "type": "string", "nullable": true }
+            },
+            "required": ["id", "name"]
+          },
+          "property": {
+            "type": "object",
+            "nullable": true,
+            "properties": {
+              "id": { "type": "string" },
+              "slug": { "type": "string" },
+              "title": { "type": "string" }
+            },
+            "required": ["id", "slug", "title"],
+            "description": "Property of the most recent message in the thread that carries one, else null"
+          },
+          "messages": { "type": "array", "items": { "$ref": "#/components/schemas/Message" } }
+        },
+        "required": ["user", "property", "messages"]
+      },
+      "ThreadSummary": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "integer" },
+              "name": { "type": "string" },
+              "picture": { "type": "string", "nullable": true }
+            },
+            "required": ["id", "name"]
+          },
+          "last_message": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "integer" },
+              "body": { "type": "string" },
+              "created_at": { "type": "string", "format": "date-time" },
+              "sender_id": { "type": "integer" }
+            },
+            "required": ["id", "body", "created_at", "sender_id"]
+          },
+          "unread_count": { "type": "integer" }
+        },
+        "required": ["user", "last_message", "unread_count"]
       },
       "UploadResponse": {
         "type": "object",

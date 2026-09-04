@@ -57,7 +57,7 @@ Sauvegarde: le fichier SQLite (data/kasa.sqlite3) est persistant. Pour repartir 
 - Spécification: public/openapi.json
 - UI de test/exploration: http://localhost:4000/docs.html (après démarrage)
 
-Les endpoints sont groupés par tags: Auth, Properties, Users, Ratings, Favorites, Uploads. Les schémas de requête/réponse sont détaillés dans la spec.
+Les endpoints sont groupés par tags: Auth, Properties, Users, Ratings, Favorites, Messages, Uploads. Les schémas de requête/réponse sont détaillés dans la spec.
 
 ## Authentification & rôles
 - Authentification: JWT via l’en-tête Authorization: Bearer <token>.
@@ -91,6 +91,11 @@ Base: /api
 - POST /api/properties/:id/favorite: ajouter aux favoris (utilisateur connecté)
 - DELETE /api/properties/:id/favorite: retirer des favoris (utilisateur connecté)
 - GET /api/users/:id/favorites: lister les favoris d’un utilisateur (self ou admin)
+
+- GET /api/messages: liste des conversations de l’utilisateur connecté (dernier message et nombre de non-lus par interlocuteur), triée par message le plus récent
+- GET /api/messages/:userId: historique des messages avec un utilisateur (du plus ancien au plus récent). Route en lecture seule: elle ne marque jamais les messages comme lus.
+- POST /api/messages: envoyer un message (recipient_id, body, property_id facultatif). L’expéditeur est toujours l’utilisateur authentifié (jamais un champ du body).
+- PATCH /api/messages/:userId/read: marquer comme lus tous les messages reçus de :userId. C’est le seul moyen de faire évoluer l’état de lecture (idempotent; un GET n’a aucun effet).
 
 - POST /api/uploads/image: uploader une image (rôle: owner ou admin). Répond avec une URL publique /uploads/... et des instructions pour l’utiliser (cover, gallery, etc.).
 - DELETE /api/uploads/images: supprimer une ou plusieurs images (rôle: owner ou admin). Accepte des noms de fichiers ou des URLs; nettoie les références en base.
