@@ -27,8 +27,15 @@ export type ThreadSummary = {
   unread_count: number;
 };
 
+/** The property a thread is about, as carried by a message or by `?logement=`. */
+export type PropertyContext = {
+  id: string;
+  slug: string;
+  title: string;
+};
+
 export type MessageThread = {
   user: MessageParticipant;
-  property: { id: string; slug: string; title: string } | null;
+  property: PropertyContext | null;
   messages: ThreadMessage[];
 };
