@@ -137,7 +137,13 @@ export default async function PropertyPage({
         </div>
 
         <div className="mt-6 space-y-4 lg:mt-0">
-          {host && <HostCard host={host} ratingAvg={property.rating_avg} />}
+          {host && (
+            <HostCard
+              host={host}
+              ratingAvg={property.rating_avg}
+              propertyId={property.id}
+            />
+          )}
           <PriceCard pricePerNight={property.price_per_night} />
         </div>
       </div>

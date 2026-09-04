@@ -7,9 +7,11 @@ const PICTURE_SIZE = 80;
 export default function HostCard({
   host,
   ratingAvg,
+  propertyId,
 }: {
   host: PropertyHost;
   ratingAvg: number;
+  propertyId: string;
 }) {
   return (
     <div className="rounded-2xl bg-kasa-white p-6 shadow-sm">
@@ -40,8 +42,10 @@ export default function HostCard({
         </p>
       </div>
 
+      {/* Carries the property so the thread opens with it as the subject,
+          overriding whatever the conversation was last about. */}
       <Link
-        href="/messagerie"
+        href={`/messagerie/${host.id}?logement=${propertyId}`}
         className="mt-6 block w-full rounded-xl bg-kasa-dark-orange py-3 text-center text-kasa-white"
       >
         Envoyer un message
