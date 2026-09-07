@@ -5,10 +5,18 @@ import type { Property, PropertyDetail } from "@/types/property";
 // server-rendered and cheap.
 const PROPERTIES_REVALIDATE = 60;
 
+/**
+ * Tags the property list so a creation can expire it on demand. Without it,
+ * `getPropertyBySlug` below could only see a new property once the 60-second
+ * window closed — and the redirect that follows a creation lands on exactly
+ * that lookup (see `updateTag` in `lib/property-actions.ts`).
+ */
+export const PROPERTIES_TAG = "properties";
+
 /** Wraps GET /api/properties. */
 export async function getProperties(): Promise<Property[]> {
   return apiFetch<Property[]>("/api/properties", {
-    next: { revalidate: PROPERTIES_REVALIDATE },
+    next: { revalidate: PROPERTIES_REVALIDATE, tags: [PROPERTIES_TAG] },
   });
 }
 

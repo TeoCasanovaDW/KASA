@@ -1,9 +1,10 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { ApiError, isUnavailable } from "./api-client";
 import { readField, readFile, readFiles, readStrings } from "./form-data";
+import { PROPERTIES_TAG } from "./properties";
 import { createProperty, uploadImage } from "./properties-api";
 import {
   composeLocation,
@@ -158,6 +159,12 @@ export async function createPropertyAction(
     };
   }
 
+  // Read-your-own-writes: the redirect below lands on `/logements/[slug]`,
+  // which resolves the slug through the cached property list. `updateTag`
+  // expires that list immediately, so the new property is visible on the very
+  // next request instead of after the 60-second window (`revalidateTag` would
+  // serve the stale list once more, which is exactly the 404 this fixes).
+  updateTag(PROPERTIES_TAG);
   revalidatePath("/");
 
   // Outside the try/catch: `redirect` signals by throwing, and a catch here
