@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { readField } from "./form-data";
 import { markThreadRead, sendMessage } from "./messages-api";
 import { getSessionUser } from "./session";
 
@@ -33,8 +34,7 @@ export async function sendMessageAction(
   prevState: MessageFormState,
   formData: FormData
 ): Promise<MessageFormState> {
-  const raw = formData.get("body");
-  const body = typeof raw === "string" ? raw.trim() : "";
+  const body = readField(formData, "body");
   const recipientId = Number(formData.get("recipientId"));
   const propertyId = formData.get("propertyId");
 

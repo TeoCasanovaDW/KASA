@@ -1,22 +1,8 @@
-import { apiFetch, ApiError } from "./api-client";
-import { getSessionToken } from "./session";
+import { apiFetch } from "./api-client";
+import { authInit } from "./api-auth";
 import type { MessageThread, ThreadMessage, ThreadSummary } from "@/types/message";
 
-// Server-only: every call needs the session's JWT and must never be cached,
-// since the response is scoped to whichever user is signed in.
-
-async function authInit(): Promise<RequestInit> {
-  const token = await getSessionToken();
-
-  if (!token) {
-    throw new ApiError("authentication required", 401);
-  }
-
-  return {
-    headers: { Authorization: `Bearer ${token}` },
-    cache: "no-store",
-  };
-}
+// Server-only: every call is scoped to the signed-in user, via `authInit`.
 
 /** Wraps GET /api/messages. */
 export async function getThreads(): Promise<ThreadSummary[]> {

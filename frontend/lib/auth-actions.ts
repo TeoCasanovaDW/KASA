@@ -1,8 +1,9 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { ApiError } from "./api-client";
+import { ApiError, isUnavailable } from "./api-client";
 import { login, register } from "./auth-api";
+import { readField } from "./form-data";
 import { createSession, destroySession } from "./session";
 
 /** `values` echoes the non-secret inputs back so a failed submit keeps the form filled. */
@@ -24,12 +25,6 @@ const INVALID_EMAIL = "Adresse email invalide.";
 const SHORT_PASSWORD = "Le mot de passe doit contenir au moins 6 caractères.";
 const UNAVAILABLE = "Le service est indisponible. Réessayez plus tard.";
 
-function readField(formData: FormData, name: string): string {
-  const value = formData.get(name);
-
-  return typeof value === "string" ? value.trim() : "";
-}
-
 /**
  * Passwords are read verbatim: outer whitespace is part of the credential, so
  * trimming here would make a password unusable at login that registration
@@ -39,13 +34,6 @@ function readPassword(formData: FormData): string {
   const value = formData.get("password");
 
   return typeof value === "string" ? value : "";
-}
-
-/** A network failure, a 5xx, or a non-`ApiError` throw (e.g. `KASA_API_URL` unset). */
-function isUnavailable(error: unknown): boolean {
-  return (
-    !(error instanceof ApiError) || error.status === 0 || error.status >= 500
-  );
 }
 
 export async function loginAction(

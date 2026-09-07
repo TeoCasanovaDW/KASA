@@ -11,6 +11,17 @@ export class ApiError extends Error {
 }
 
 /**
+ * True when a failure is the service's fault rather than the request's: a
+ * network failure, a 5xx, or a non-`ApiError` throw (e.g. `KASA_API_URL`
+ * unset). The actions map exactly this set to their "service unavailable" copy.
+ */
+export function isUnavailable(error: unknown): boolean {
+  return (
+    !(error instanceof ApiError) || error.status === 0 || error.status >= 500
+  );
+}
+
+/**
  * Transport-only: builds the URL and normalizes errors. Sets no caching or
  * revalidation policy — each call site owns that via `init`.
  */
