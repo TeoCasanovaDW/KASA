@@ -26,11 +26,13 @@ export default function MessageBubble({
         </p>
       </div>
 
+      {/* The mockup lines the bubble up with the meta line rather than the
+          avatar, so it clears the avatar column: 32px square + the 8px gap. */}
       <p
-        className={`mt-2 max-w-md rounded-2xl px-4 py-3 text-sm break-words ${
+        className={`mt-2 max-w-sm rounded-2xl px-4 py-3 text-sm break-words ${
           isOwn
-            ? "bg-kasa-dark-orange text-kasa-white"
-            : "bg-kasa-white text-kasa-black shadow-sm"
+            ? "mr-10 bg-kasa-dark-orange text-kasa-white"
+            : "ml-10 bg-kasa-white text-kasa-black shadow-sm"
         }`}
       >
         {message.body}

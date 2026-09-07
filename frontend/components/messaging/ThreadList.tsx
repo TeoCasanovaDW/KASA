@@ -24,7 +24,7 @@ export default function ThreadList({
           <ArrowLeftIcon />
           Retour
         </Link>
-        <h1 className="mt-6 text-3xl font-bold text-kasa-black">Messages</h1>
+        <h1 className="mt-8 text-3xl font-bold text-kasa-black">Messages</h1>
       </div>
 
       {threads.length === 0 ? (
@@ -32,12 +32,12 @@ export default function ThreadList({
           Aucune conversation pour le moment. Consultez un logement pour contacter un hôte.
         </p>
       ) : (
-        <ul className="mt-4 divide-y divide-kasa-gray-light lg:overflow-y-auto">
+        <ul className="mt-4 divide-y divide-kasa-gray-light px-2 lg:min-h-0 lg:overflow-y-auto">
           {threads.map((thread) => (
             <li key={thread.user.id}>
               <Link
                 href={`/messagerie/${thread.user.id}`}
-                className={`flex items-center gap-3 px-6 py-4 ${
+                className={`flex items-center gap-3 px-4 py-3 ${
                   thread.user.id === activeUserId ? "bg-kasa-light-orange" : ""
                 }`}
               >

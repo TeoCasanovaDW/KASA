@@ -131,7 +131,7 @@ export default async function ThreadPage({
 
   return (
     <>
-      <div className="hidden w-full flex-col border-kasa-gray-light lg:flex lg:w-[370px] lg:flex-none lg:border-r">
+      <div className="hidden w-full flex-col border-kasa-gray-light lg:flex lg:w-[376px] lg:flex-none lg:border-r">
         {threadsFailed ? (
           <p className="p-6 text-sm text-kasa-gray-dark">{UNAVAILABLE}</p>
         ) : (

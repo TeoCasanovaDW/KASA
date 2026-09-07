@@ -30,7 +30,7 @@ export default function MessageThreadView({
 
   return (
     <div className="flex h-full flex-col bg-kasa-light-orange">
-      <div className="flex-none border-b border-kasa-gray-light bg-kasa-white px-6 py-4">
+      <div className="flex-none border-b border-kasa-gray-light bg-kasa-white px-6 py-4 lg:px-10">
         <Link
           href="/messagerie"
           className="mb-3 inline-flex items-center gap-1.5 rounded-lg bg-kasa-gray-light px-4 py-2 text-sm lg:hidden"
@@ -54,17 +54,26 @@ export default function MessageThreadView({
         )}
       </div>
 
-      <div className="flex-1 space-y-6 p-6 lg:overflow-y-auto">
+      {/* Desktop pads the thread column to the mockup's 40px and opens the
+          messages out to ~32px apart; an empty thread centres its placeholder
+          instead of parking it in the top-left corner. */}
+      <div
+        className={`flex-1 p-6 lg:min-h-0 lg:overflow-y-auto lg:p-10 ${
+          thread.messages.length === 0
+            ? "flex items-center justify-center"
+            : "space-y-6 lg:space-y-8"
+        }`}
+      >
         {thread.messages.length === 0 ? (
           <p className="text-sm text-kasa-gray-dark">
             Aucun message. Écrivez le premier.
           </p>
         ) : (
           groups.map((group, index) => (
-            <div key={group.day} className="space-y-6">
+            <div key={group.day} className="space-y-6 lg:space-y-8">
               {/* The first day carries no separator, matching the mockup. */}
               {index > 0 && (
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3">
                   <hr className="flex-1 border-kasa-gray-light" />
                   <span className="text-xs text-kasa-gray-dark">
                     {group.day}

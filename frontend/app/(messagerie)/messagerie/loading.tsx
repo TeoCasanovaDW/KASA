@@ -10,7 +10,7 @@ export default function Loading() {
 
       <div
         aria-hidden="true"
-        className="flex w-full flex-col border-kasa-gray-light p-6 lg:w-[370px] lg:flex-none lg:border-r"
+        className="flex w-full flex-col border-kasa-gray-light p-6 lg:w-[376px] lg:flex-none lg:border-r"
       >
         <div className="h-9 w-28 rounded-full motion-safe:animate-pulse bg-kasa-gray-light" />
         <div className="mt-8 h-8 w-44 rounded motion-safe:animate-pulse bg-kasa-gray-light" />
@@ -32,7 +32,7 @@ export default function Loading() {
         aria-hidden="true"
         className="hidden flex-1 flex-col bg-kasa-light-orange lg:flex"
       >
-        <div className="flex-1 space-y-6 p-6">
+        <div className="flex-1 space-y-6 p-6 lg:space-y-8 lg:p-10">
           {Array.from({ length: 5 }).map((_, index) => (
             <div
               key={index}
