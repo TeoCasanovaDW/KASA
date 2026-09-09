@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { FavoritesProvider } from "@/components/favorites/FavoritesProvider";
+import { getSiteUrl } from "@/lib/env";
 import "./globals.css";
 
 const inter = Inter({
@@ -8,9 +9,24 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
+const title = "Kasa — Location de logements entre particuliers";
+const description =
+  "Trouvez et proposez des logements de vacances partout en France avec Kasa.";
+
 export const metadata: Metadata = {
-  title: "Kasa",
-  description: "Plateforme de location de logements",
+  metadataBase: new URL(getSiteUrl()),
+  title: {
+    default: title,
+    template: "%s | Kasa",
+  },
+  description,
+  openGraph: {
+    type: "website",
+    siteName: "Kasa",
+    locale: "fr_FR",
+    title,
+    description,
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

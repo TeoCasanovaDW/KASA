@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Container from "@/components/layout/Container";
 import HomeHero from "@/components/home/HomeHero";
 import HowItWorks from "@/components/home/HowItWorks";
@@ -6,6 +7,16 @@ import FavoriteButton from "@/components/favorites/FavoriteButton";
 import { getProperties } from "@/lib/properties";
 import { ApiError } from "@/lib/api-client";
 import type { Property } from "@/types/property";
+
+// No `title`: the home page keeps the root default, and setting one here would
+// run it through the `%s | Kasa` template. No `openGraph` either — the root
+// object already describes the site, and metadata merging is shallow, so an
+// override here would drop `siteName`, `type` and `locale`.
+export const metadata: Metadata = {
+  description:
+    "Trouvez et proposez des logements de vacances partout en France avec Kasa.",
+  alternates: { canonical: "/" },
+};
 
 export default async function Home() {
   let properties: Property[] = [];

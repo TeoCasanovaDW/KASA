@@ -1,5 +1,13 @@
+import type { Metadata } from "next";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+
+// On the layout this covers both `/messagerie` and `/messagerie/[contactId]`,
+// since a child that sets only `title` inherits the rest. No canonical here: it
+// would be inherited by the `[contactId]` child, whose threads are private.
+export const metadata: Metadata = {
+  robots: { index: false, follow: true },
+};
 
 /**
  * Messaging opts out of the shared site chrome on desktop (D2): there the split

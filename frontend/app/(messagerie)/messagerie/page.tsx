@@ -8,6 +8,7 @@ import type { ThreadSummary } from "@/types/message";
 
 export const metadata: Metadata = {
   title: "Messagerie",
+  alternates: { canonical: "/messagerie" },
 };
 
 export default async function MessageriePage() {

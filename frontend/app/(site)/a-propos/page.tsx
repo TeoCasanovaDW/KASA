@@ -6,6 +6,7 @@ import about02 from "@/public/images/about_02.png";
 
 export const metadata: Metadata = {
   title: "À propos",
+  alternates: { canonical: "/a-propos" },
 };
 
 export default function AProposPage() {

@@ -4,7 +4,11 @@ import AuthLinkLine from "@/components/auth/AuthLinkLine";
 import LoginForm from "@/components/auth/LoginForm";
 import { loginAction } from "@/lib/auth-actions";
 
-export const metadata: Metadata = { title: "Connexion | Kasa" };
+export const metadata: Metadata = {
+  title: "Connexion",
+  alternates: { canonical: "/connexion" },
+  robots: { index: false, follow: true },
+};
 
 export default function ConnexionPage() {
   return (

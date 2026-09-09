@@ -4,7 +4,11 @@ import AuthLinkLine from "@/components/auth/AuthLinkLine";
 import RegisterForm from "@/components/auth/RegisterForm";
 import { registerAction } from "@/lib/auth-actions";
 
-export const metadata: Metadata = { title: "Inscription | Kasa" };
+export const metadata: Metadata = {
+  title: "Inscription",
+  alternates: { canonical: "/inscription" },
+  robots: { index: false, follow: true },
+};
 
 export default function InscriptionPage() {
   return (

@@ -9,7 +9,9 @@ import { getSessionUser } from "@/lib/session";
 import { getUserById } from "@/lib/users-api";
 
 export const metadata: Metadata = {
-  title: "Ajouter un logement | Kasa",
+  title: "Ajouter un logement",
+  alternates: { canonical: "/ajouter-un-logement" },
+  robots: { index: false, follow: true },
 };
 
 // The same pill as the property detail page (app/(site)/logements/[slug]/page.tsx).

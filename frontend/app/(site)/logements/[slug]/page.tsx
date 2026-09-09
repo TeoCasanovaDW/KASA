@@ -46,20 +46,29 @@ export async function generateMetadata({
   }
 
   if (loadFailed || !property) {
-    return { title: "Logement — Kasa" };
+    return { title: "Logement" };
   }
 
-  const title = `${property.title} — Kasa`;
+  const title = property.title;
   const description = property.description
     ? truncateDescription(property.description)
     : FALLBACK_DESCRIPTION;
+  const path = `/logements/${slug}`;
 
   return {
     title,
     description,
+    alternates: { canonical: path },
+    // Metadata merging is shallow, so this object replaces the root's whole
+    // `openGraph` block: `type`, `siteName` and `locale` are restated here
+    // rather than inherited.
     openGraph: {
+      type: "website",
+      siteName: "Kasa",
+      locale: "fr_FR",
       title,
       description,
+      url: path,
       images: property.cover ? [property.cover] : undefined,
     },
   };

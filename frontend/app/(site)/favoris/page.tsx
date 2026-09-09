@@ -1,8 +1,16 @@
+import type { Metadata } from "next";
 import Container from "@/components/layout/Container";
 import FavoritesGrid from "@/components/favorites/FavoritesGrid";
 import { getProperties } from "@/lib/properties";
 import { ApiError } from "@/lib/api-client";
 import type { Property } from "@/types/property";
+
+export const metadata: Metadata = {
+  title: "Vos favoris",
+  description: "Retrouvez les logements que vous avez ajoutés à vos favoris.",
+  alternates: { canonical: "/favoris" },
+  robots: { index: false, follow: true },
+};
 
 export default async function FavorisPage() {
   let properties: Property[] = [];
