@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { FavoritesProvider } from "@/components/favorites/FavoritesProvider";
 import { getSiteUrl } from "@/lib/env";
+import { buildWebSiteJsonLd, serializeJsonLd } from "@/lib/structured-data";
 import "./globals.css";
 
 const inter = Inter({
@@ -36,6 +37,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${inter.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: serializeJsonLd(buildWebSiteJsonLd(getSiteUrl())),
+          }}
+        />
         <FavoritesProvider>{children}</FavoritesProvider>
       </body>
     </html>

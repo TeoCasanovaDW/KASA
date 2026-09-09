@@ -8,7 +8,9 @@ import PriceCard from "@/components/property/PriceCard";
 import PropertyGallery from "@/components/property/PropertyGallery";
 import PropertyInfo from "@/components/property/PropertyInfo";
 import { ApiError } from "@/lib/api-client";
+import { getSiteUrl } from "@/lib/env";
 import { getPropertyBySlug } from "@/lib/properties";
+import { buildPropertyJsonLd, serializeJsonLd } from "@/lib/structured-data";
 import type { PropertyDetail } from "@/types/property";
 
 const FALLBACK_DESCRIPTION = "Découvrez ce logement sur Kasa.";
@@ -125,6 +127,12 @@ export default async function PropertyPage({
 
   return (
     <Container className="mt-20 pt-6 pb-16">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: serializeJsonLd(buildPropertyJsonLd(property, getSiteUrl())),
+        }}
+      />
       <BackLink />
 
       <div
