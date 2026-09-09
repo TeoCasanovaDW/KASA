@@ -98,6 +98,7 @@ export default function PropertyGallery({
             fill
             className="object-cover"
             sizes="100vw"
+            preload
           />
         </button>
 
