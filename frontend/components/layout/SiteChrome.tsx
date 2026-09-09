@@ -13,8 +13,16 @@ export default function SiteChrome({
 }) {
   return (
     <>
+      <a
+        href="#contenu"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-kasa-white focus:px-4 focus:py-2 focus:text-kasa-black"
+      >
+        Aller au contenu principal
+      </a>
       <Header />
-      <main className="flex flex-1 flex-col">{children}</main>
+      <main id="contenu" tabIndex={-1} className="flex flex-1 flex-col">
+        {children}
+      </main>
       <Footer />
     </>
   );

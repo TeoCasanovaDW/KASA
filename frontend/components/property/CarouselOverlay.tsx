@@ -109,7 +109,7 @@ export default function CarouselOverlay({
             type="button"
             aria-label="Fermer la galerie"
             onClick={onClose}
-            className="cursor-pointer rounded-full p-2 text-kasa-white"
+            className="cursor-pointer rounded-full p-2 text-kasa-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-kasa-white"
           >
             <CloseIcon />
           </button>
@@ -130,7 +130,7 @@ export default function CarouselOverlay({
                 type="button"
                 aria-label="Image précédente"
                 onClick={goPrevious}
-                className="absolute top-1/2 left-2 -translate-y-1/2 cursor-pointer rounded-full bg-kasa-black/60 p-2 text-kasa-white"
+                className="absolute top-1/2 left-2 -translate-y-1/2 cursor-pointer rounded-full bg-kasa-black/60 p-2 text-kasa-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-kasa-white"
               >
                 <ChevronIcon direction="left" />
               </button>
@@ -138,7 +138,7 @@ export default function CarouselOverlay({
                 type="button"
                 aria-label="Image suivante"
                 onClick={goNext}
-                className="absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer rounded-full bg-kasa-black/60 p-2 text-kasa-white"
+                className="absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer rounded-full bg-kasa-black/60 p-2 text-kasa-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-kasa-white"
               >
                 <ChevronIcon direction="right" />
               </button>
