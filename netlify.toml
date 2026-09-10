@@ -2,12 +2,15 @@
 # plugin declaration: Netlify detects Next.js itself and installs the runtime
 # that owns the output directory.
 [build]
-  base = "frontend"
-  command = "npm run build"
+base = "frontend"
+command = "npm run build"
+publish = ".next"
 
 [build.environment]
-  # README.md states Node 18+, tested with 24.
-  NODE_VERSION = "24"
+NODE_VERSION = "24"
+
+[[plugins]]
+package = "@netlify/plugin-nextjs"
 
 # KASA_API_URL and KASA_SITE_URL are set in the Netlify UI, never here.
 # KASA_API_URL is read at build time by the `/uploads/:path*` rewrite in
