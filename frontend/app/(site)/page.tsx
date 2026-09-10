@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import Container from "@/components/layout/Container";
+import PropertyGridSkeleton from "@/components/layout/PropertyGridSkeleton";
 import HomeHero from "@/components/home/HomeHero";
 import HowItWorks from "@/components/home/HowItWorks";
 import PropertyCard from "@/components/property/PropertyCard";
@@ -18,7 +20,25 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
 
-export default async function Home() {
+export default function Home() {
+  return (
+    <Container className="pt-10 pb-16 md:pb-24">
+      <HomeHero />
+      <Suspense fallback={<PropertyGridSkeleton />}>
+        <PropertyList />
+      </Suspense>
+      <div className="mt-10">
+        <HowItWorks />
+      </div>
+    </Container>
+  );
+}
+
+// The list is the only part of the page that waits on data, so it owns the
+// Suspense boundary. Keeping that boundary inside the page rather than in a
+// `loading.tsx` is what lets `/logements/[slug]` still answer a real 404:
+// a boundary above that route flushes the response before `notFound()` runs.
+async function PropertyList() {
   let properties: Property[] = [];
   let loadFailed = false;
 
@@ -33,8 +53,7 @@ export default async function Home() {
   }
 
   return (
-    <Container className="pt-10 pb-16 md:pb-24">
-      <HomeHero />
+    <>
       {loadFailed ? (
         <p className="mt-10 text-center text-kasa-gray-dark">
           Les logements n&apos;ont pas pu être chargés. Réessayez plus tard.
@@ -55,9 +74,6 @@ export default async function Home() {
           ))}
         </ul>
       )}
-      <div className="mt-10">
-        <HowItWorks />
-      </div>
-    </Container>
+    </>
   );
 }

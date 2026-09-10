@@ -1,8 +1,9 @@
-import Container from "@/components/layout/Container";
-
-export default function Loading() {
+// Shared loading grid for the three routes that await the property list. The
+// caller supplies the `Container`, so the home page can drop this inside the
+// one it already renders instead of nesting two.
+export default function PropertyGridSkeleton() {
   return (
-    <Container className="pt-10">
+    <>
       <span className="sr-only">Chargement des logements…</span>
       <ul
         aria-hidden="true"
@@ -23,6 +24,6 @@ export default function Loading() {
           </li>
         ))}
       </ul>
-    </Container>
+    </>
   );
 }
