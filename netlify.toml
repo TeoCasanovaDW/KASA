@@ -1,0 +1,15 @@
+# Netlify builds the frontend from its subdirectory. No `publish` path and no
+# plugin declaration: Netlify detects Next.js itself and installs the runtime
+# that owns the output directory.
+[build]
+  base = "frontend"
+  command = "npm run build"
+
+[build.environment]
+  # README.md states Node 18+, tested with 24.
+  NODE_VERSION = "24"
+
+# KASA_API_URL and KASA_SITE_URL are set in the Netlify UI, never here.
+# KASA_API_URL is read at build time by the `/uploads/:path*` rewrite in
+# frontend/next.config.ts, and at runtime by every server fetch, so it must
+# exist in the build environment.
