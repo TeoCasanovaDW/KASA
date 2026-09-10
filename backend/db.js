@@ -3,8 +3,16 @@ const fs = require('fs');
 const sqlite3 = require('sqlite3').verbose();
 const { promisify } = require('util');
 
-const DB_PATH = path.join(__dirname, 'data', 'kasa.sqlite3');
+// Storage paths are configurable so they can live on a mounted volume in
+// production; the defaults keep the repository-local layout used locally.
+const DB_PATH = process.env.KASA_DB_PATH || path.join(__dirname, 'data', 'kasa.sqlite3');
+const UPLOAD_DIR = process.env.KASA_UPLOAD_DIR || path.join(__dirname, 'public', 'uploads');
+// Seed data ships with the code and is always read from the repository copy.
 const PROPS_JSON_PATH = path.join(__dirname, 'data', 'properties.json');
+
+// A fresh volume mounts empty: create both locations before anything uses them.
+fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
+fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 
 function openDb() {
   const db = new sqlite3.Database(DB_PATH);
@@ -268,4 +276,5 @@ module.exports = {
   initialize,
   openDb,
   DB_PATH,
+  UPLOAD_DIR,
 };

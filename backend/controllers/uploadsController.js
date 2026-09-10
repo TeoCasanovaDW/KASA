@@ -1,6 +1,8 @@
 const path = require('path');
 const fs = require('fs');
 
+const { UPLOAD_DIR } = require('../db');
+
 async function uploadImage(req, res) {
   let multer;
   try {
@@ -8,11 +10,9 @@ async function uploadImage(req, res) {
   } catch (e) {
     return res.status(500).json({ error: 'Upload not available: missing dependency (multer)' });
   }
-  const uploadDir = path.join(__dirname, '..', 'public', 'uploads');
-  try { fs.mkdirSync(uploadDir, { recursive: true }); } catch (_) {}
 
   const storage = multer.diskStorage({
-    destination: function (req, file, cb) { cb(null, uploadDir); },
+    destination: function (req, file, cb) { cb(null, UPLOAD_DIR); },
     filename: function (req, file, cb) {
       const ext = path.extname(file && file.originalname ? file.originalname : '').toLowerCase();
       const base = Date.now() + '-' + Math.random().toString(16).slice(2, 10);
@@ -73,9 +73,6 @@ async function uploadImage(req, res) {
 }
 
 async function deleteImages(req, res) {
-  const uploadDir = path.join(__dirname, '..', 'public', 'uploads');
-  try { fs.mkdirSync(uploadDir, { recursive: true }); } catch (_) {}
-
   function toFilename(item) {
     if (!item) return null;
     const s = String(item);
@@ -110,7 +107,7 @@ async function deleteImages(req, res) {
 
   const db = req.app.locals.db;
   for (const name of filenames) {
-    const full = path.join(uploadDir, name);
+    const full = path.join(UPLOAD_DIR, name);
     try {
       if (!fs.existsSync(full)) {
         not_found.push(name);
