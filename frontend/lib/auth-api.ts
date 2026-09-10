@@ -5,6 +5,7 @@ import type { AuthResponse } from "@/types/user";
 // Both calls are uncached mutations; `ApiError` propagates untouched so the
 // caller owns the status -> copy mapping.
 
+/** Wraps POST /auth/login. Uncached: `cache: "no-store"` on every call. */
 export async function login(credentials: {
   email: string;
   password: string;
@@ -17,6 +18,7 @@ export async function login(credentials: {
   });
 }
 
+/** Wraps POST /auth/register. Uncached: `cache: "no-store"` on every call. */
 export async function register(payload: {
   name: string;
   email: string;

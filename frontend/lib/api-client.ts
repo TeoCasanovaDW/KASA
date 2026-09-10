@@ -1,5 +1,10 @@
 import { getApiUrl } from "./env";
 
+/**
+ * Thrown by `apiFetch` for any non-2xx response, or constructed directly for
+ * a network failure (`status: 0`). Carries the backend's message and status
+ * so each call site maps the ones it cares about to its own copy.
+ */
 export class ApiError extends Error {
   status: number;
 

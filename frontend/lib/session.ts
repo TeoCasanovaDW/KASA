@@ -122,12 +122,14 @@ export async function getSessionToken(): Promise<string | null> {
   return (await cookies()).get(SESSION_COOKIE)?.value ?? null;
 }
 
+/** `null` when signed out, or when the stored token fails to decode. */
 export async function getSessionUser(): Promise<SessionUser | null> {
   const token = await getSessionToken();
 
   return token ? decodeSessionToken(token) : null;
 }
 
+/** Clears the session cookie. */
 export async function destroySession(): Promise<void> {
   (await cookies()).delete(SESSION_COOKIE);
 }

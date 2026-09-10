@@ -54,6 +54,13 @@ function readTags(formData: FormData): string[] {
   return tags;
 }
 
+/**
+ * Server Action bound to the creation form. Rejects a non-owner session,
+ * validates every field in one pass, uploads the cover and pictures, then
+ * creates the property. On success it expires the cached property list via
+ * `updateTag` and revalidates `/`, then redirects to the new property page,
+ * which never returns to the caller.
+ */
 export async function createPropertyAction(
   prevState: PropertyFormState,
   formData: FormData

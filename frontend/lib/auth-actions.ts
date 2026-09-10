@@ -36,6 +36,11 @@ function readPassword(formData: FormData): string {
   return typeof value === "string" ? value : "";
 }
 
+/**
+ * Server Action bound to the login form. Returns field or form errors to
+ * redisplay the form; on success it creates the session cookie and redirects
+ * to `/`, which never returns to the caller.
+ */
 export async function loginAction(
   prevState: AuthFormState,
   formData: FormData
@@ -85,6 +90,12 @@ export async function loginAction(
   redirect("/");
 }
 
+/**
+ * Server Action bound to the registration form. Maps a 409 to an
+ * email-already-used field error and a password-related 400 to the password
+ * field. On success it creates the session cookie and redirects to `/`,
+ * which never returns to the caller.
+ */
 export async function registerAction(
   prevState: AuthFormState,
   formData: FormData
@@ -165,6 +176,7 @@ export async function registerAction(
   redirect("/");
 }
 
+/** Server Action that clears the session cookie and redirects to `/`, which never returns to the caller. */
 export async function logoutAction(): Promise<void> {
   await destroySession();
   redirect("/");

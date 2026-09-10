@@ -30,6 +30,12 @@ export async function markThreadReadAction(contactId: number): Promise<void> {
   }
 }
 
+/**
+ * Server Action bound to the message composer. Guards against a signed-out
+ * user or an invalid recipient — unreachable from the UI, since the button is
+ * disabled for both. On success it revalidates the thread and the list, and
+ * returns no `value`, which is what clears the field.
+ */
 export async function sendMessageAction(
   prevState: MessageFormState,
   formData: FormData
