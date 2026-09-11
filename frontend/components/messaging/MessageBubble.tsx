@@ -2,13 +2,17 @@ import Avatar from "@/components/ui/Avatar";
 import { formatListTime } from "@/lib/messages-format";
 import type { ThreadMessage } from "@/types/message";
 
+const AVATAR_SIZE = 32;
+
 export default function MessageBubble({
   message,
   participantName,
+  picture,
   isOwn,
 }: {
   message: ThreadMessage;
   participantName: string;
+  picture: string | null;
   isOwn: boolean;
 }) {
   return (
@@ -16,7 +20,10 @@ export default function MessageBubble({
       <div
         className={`flex items-center gap-2 ${isOwn ? "flex-row-reverse" : ""}`}
       >
-        <Avatar src={null} size={32} />
+        {/* Each bubble carries its own sender's photo, so a thread shows both
+            interlocutors; Avatar falls back to the neutral silhouette when the
+            picture is missing. */}
+        <Avatar src={picture} size={AVATAR_SIZE} />
         <p className="text-xs text-kasa-gray-dark">
           {participantName} • {formatListTime(message.created_at)}
         </p>

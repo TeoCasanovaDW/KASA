@@ -16,11 +16,15 @@ const OWN_LABEL = "Vous";
 export default function MessageThreadView({
   thread,
   currentUserId,
+  currentUserPicture,
   currentProperty,
   action,
 }: {
   thread: MessageThread;
   currentUserId: number;
+  // The JWT carries no picture (types/user.ts), so the page looks it up and
+  // passes it down; `null` simply yields the neutral fallback avatar.
+  currentUserPicture: string | null;
   currentProperty: PropertyContext | null;
   action: (
     state: MessageFormState,
@@ -94,6 +98,7 @@ export default function MessageThreadView({
                     key={message.id}
                     message={message}
                     participantName={isOwn ? OWN_LABEL : thread.user.name}
+                    picture={isOwn ? currentUserPicture : thread.user.picture}
                     isOwn={isOwn}
                   />
                 );

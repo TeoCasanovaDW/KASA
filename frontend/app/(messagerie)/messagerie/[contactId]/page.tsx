@@ -8,6 +8,7 @@ import { sendMessageAction } from "@/lib/messages-actions";
 import { getThread, getThreads } from "@/lib/messages-api";
 import { getPropertyById } from "@/lib/properties";
 import { getSessionUser } from "@/lib/session";
+import { getUserById } from "@/lib/users-api";
 import type {
   MessageThread,
   PropertyContext,
@@ -65,6 +66,18 @@ export default async function ThreadPage({
 
   if (id === user.id) {
     redirect("/messagerie");
+  }
+
+  // Own bubbles show the signed-in user's photo, which the JWT never carries
+  // (types/user.ts), so it takes one lookup. Every failure is swallowed rather
+  // than narrowed to `ApiError` as elsewhere, exactly like the host avatar in
+  // `ajouter-un-logement`: a missing avatar must never cost the whole thread.
+  let currentUserPicture: string | null = null;
+
+  try {
+    currentUserPicture = (await getUserById(user.id)).picture;
+  } catch {
+    currentUserPicture = null;
   }
 
   let threads: ThreadSummary[] = [];
@@ -147,6 +160,7 @@ export default async function ThreadPage({
             <MessageThreadView
               thread={thread}
               currentUserId={user.id}
+              currentUserPicture={currentUserPicture}
               currentProperty={currentProperty}
               action={sendMessageAction}
             />
