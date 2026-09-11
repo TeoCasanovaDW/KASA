@@ -10,6 +10,7 @@ import PropertyInfo from "@/components/property/PropertyInfo";
 import { ApiError } from "@/lib/api-client";
 import { getSiteUrl } from "@/lib/env";
 import { getPropertyBySlug } from "@/lib/properties";
+import { getSessionUser } from "@/lib/session";
 import { buildPropertyJsonLd, serializeJsonLd } from "@/lib/structured-data";
 import type { PropertyDetail } from "@/types/property";
 
@@ -124,6 +125,7 @@ export default async function PropertyPage({
   }
 
   const host = property.host;
+  const sessionUser = await getSessionUser();
 
   return (
     <Container className="mt-20 pt-6 pb-16">
@@ -159,6 +161,7 @@ export default async function PropertyPage({
               host={host}
               ratingAvg={property.rating_avg}
               propertyId={property.id}
+              currentUserId={sessionUser?.id ?? null}
             />
           )}
           <PriceCard pricePerNight={property.price_per_night} />
