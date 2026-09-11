@@ -96,10 +96,17 @@ export default function MobileNav({
             <Link href="/favoris" onClick={close}>
               Favoris
             </Link>
-            {/* Server-rendered auth state; the wrapper keeps this slot's
-                previous close-on-click behavior, which its content cannot
-                reach from the server. */}
-            <div onClick={close}>{authSlot}</div>
+            {/* Server-rendered auth state; the wrapper closes the panel on the
+                slot's navigations, which its content cannot reach from the
+                server. Narrowed to links: the account menu's own trigger must
+                not tear down the panel it opens into. */}
+            <div
+              onClick={(event) => {
+                if ((event.target as HTMLElement).closest("a")) close();
+              }}
+            >
+              {authSlot}
+            </div>
             <Link
               href="/ajouter-un-logement"
               onClick={close}
