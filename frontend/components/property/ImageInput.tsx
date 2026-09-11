@@ -2,6 +2,7 @@
 
 // No server-only imports: stays renderable under Vitest, like AuthField.
 import { useEffect, useRef, useState } from "react";
+import MinusIcon from "@/components/icons/MinusIcon";
 import PlusIcon from "@/components/icons/PlusIcon";
 import { validateImageFile } from "@/lib/property-form";
 
@@ -9,6 +10,9 @@ import { validateImageFile } from "@/lib/property-form";
  * One labelled `<input type="file">` with a thumbnail preview and a remove
  * button. Used both for the single "Image de couverture" field and, wrapped
  * by `PicturesField`, for each "Image du logement" row.
+ *
+ * `onRemove` is what the row owner (`PicturesField`) passes to drop the whole
+ * row; without it the field owns its own removal and just clears the file.
  */
 export default function ImageInput({
   id,
@@ -16,12 +20,14 @@ export default function ImageInput({
   label,
   required,
   onValidityChange,
+  onRemove,
 }: {
   id: string;
   name: string;
   label: string;
   required?: boolean;
   onValidityChange?: (invalid: boolean) => void;
+  onRemove?: () => void;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const previewUrlRef = useRef<string | null>(null);
@@ -147,17 +153,24 @@ export default function ImageInput({
         >
           <PlusIcon />
         </button>
-      </div>
 
-      {file && (
-        <button
-          type="button"
-          onClick={handleRemove}
-          className="mt-1 text-xs font-semibold text-kasa-red"
-        >
-          Retirer
-        </button>
-      )}
+        {/* The one remove control, kept inside this row so it stays level with
+            the `+` button whatever renders underneath (filename, error). A row
+            the owner can drop always shows it; otherwise it appears only once
+            there is a file to clear. */}
+        {(onRemove || file) && (
+          <button
+            type="button"
+            onClick={onRemove ?? handleRemove}
+            aria-label={
+              onRemove ? "Retirer cette image" : `Retirer le fichier pour ${label}`
+            }
+            className="flex h-10 w-10 flex-none items-center justify-center rounded-lg bg-kasa-red text-kasa-white transition-colors hover:bg-kasa-dark-orange"
+          >
+            <MinusIcon />
+          </button>
+        )}
+      </div>
 
       {error && (
         <p id={errorId} className="mt-1 text-xs text-kasa-red">

@@ -2,7 +2,6 @@
 
 // No server-only imports: stays renderable under Vitest, like ImageInput.
 import { useRef, useState } from "react";
-import MinusIcon from "@/components/icons/MinusIcon";
 import ImageInput from "@/components/property/ImageInput";
 import { MAX_PICTURES } from "@/lib/property-form";
 
@@ -46,27 +45,16 @@ export default function PicturesField({
     <div>
       <div className="space-y-3">
         {rows.map((row, index) => (
-          <div key={row.id} className="flex items-end gap-2">
-            <div className="min-w-0 flex-1">
-              <ImageInput
-                id={`pictures-${row.id}`}
-                name="pictures"
-                label={index === 0 ? "Image du logement" : `Image du logement ${index + 1}`}
-                onValidityChange={(invalid) => reportValidity(row.id, invalid)}
-              />
-            </div>
-
-            {index > 0 && (
-              <button
-                type="button"
-                onClick={() => removeRow(row.id)}
-                aria-label="Retirer cette image"
-                className="flex h-10 w-10 flex-none items-center justify-center rounded-lg bg-kasa-red text-kasa-white transition-colors hover:bg-kasa-dark-orange"
-              >
-                <MinusIcon />
-              </button>
-            )}
-          </div>
+          // The first row is never dropped, so it keeps `ImageInput`'s own
+          // remove behaviour: its minus clears the file instead.
+          <ImageInput
+            key={row.id}
+            id={`pictures-${row.id}`}
+            name="pictures"
+            label={index === 0 ? "Image du logement" : `Image du logement ${index + 1}`}
+            onValidityChange={(invalid) => reportValidity(row.id, invalid)}
+            onRemove={index > 0 ? () => removeRow(row.id) : undefined}
+          />
         ))}
       </div>
 

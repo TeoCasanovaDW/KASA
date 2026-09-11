@@ -238,6 +238,45 @@ describe("PropertyForm", () => {
     ).not.toBeInTheDocument();
   });
 
+  it("removes an added picture row with its minus control", async () => {
+    const user = userEvent.setup();
+    renderForm(stubAction());
+    const rows = () => screen.getAllByLabelText(/^Image du logement/);
+
+    await user.click(screen.getByRole("button", { name: "+Ajouter une image" }));
+    expect(rows()).toHaveLength(2);
+
+    // Only the second row is droppable, so this name is unambiguous.
+    await user.click(screen.getByRole("button", { name: "Retirer cette image" }));
+    expect(rows()).toHaveLength(1);
+  });
+
+  it("shows a minus on a non-droppable field only once it holds a file, and clears it", async () => {
+    const user = userEvent.setup();
+    renderForm(stubAction());
+    const clearCover = () =>
+      screen.queryByRole("button", {
+        name: "Retirer le fichier pour Image de couverture",
+      });
+
+    expect(clearCover()).not.toBeInTheDocument();
+
+    await user.upload(
+      screen.getByLabelText("Image de couverture"),
+      new File(["cover"], "cover.png", { type: "image/png" }),
+    );
+    expect(screen.getByText("cover.png")).toBeInTheDocument();
+
+    await user.click(
+      screen.getByRole("button", {
+        name: "Retirer le fichier pour Image de couverture",
+      }),
+    );
+
+    expect(screen.queryByText("cover.png")).not.toBeInTheDocument();
+    expect(clearCover()).not.toBeInTheDocument();
+  });
+
   it("renders the submit button here and disables it while pending", async () => {
     const user = userEvent.setup();
     let resolveAction: (result: FormState) => void = () => {};
