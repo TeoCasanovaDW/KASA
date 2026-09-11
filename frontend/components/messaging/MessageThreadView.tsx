@@ -2,6 +2,7 @@ import Link from "next/link";
 import ArrowLeftIcon from "@/components/icons/ArrowLeftIcon";
 import MessageBubble from "@/components/messaging/MessageBubble";
 import MessageComposer from "@/components/messaging/MessageComposer";
+import Avatar from "@/components/ui/Avatar";
 import type { MessageFormState } from "@/lib/messages-actions";
 import { groupMessagesByDay } from "@/lib/messages-format";
 import type { MessageThread, PropertyContext } from "@/types/message";
@@ -39,7 +40,10 @@ export default function MessageThreadView({
           Retour
         </Link>
 
-        <p className="font-semibold text-kasa-black">{thread.user.name}</p>
+        <div className="flex items-center gap-3">
+          <Avatar src={thread.user.picture} size={36} />
+          <p className="font-semibold text-kasa-black">{thread.user.name}</p>
+        </div>
 
         {currentProperty && (
           <p className="mt-1 text-sm text-kasa-gray-dark">

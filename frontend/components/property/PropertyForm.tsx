@@ -3,11 +3,11 @@
 // The action arrives as a prop rather than an import, exactly like
 // `LoginForm`/`MessageComposer`: it keeps this component free of the
 // `"use server"` module so the test can inject a stub.
-import Image from "next/image";
 import { useActionState, useState } from "react";
 import ImageInput from "@/components/property/ImageInput";
 import PicturesField from "@/components/property/PicturesField";
 import TagSelector from "@/components/property/TagSelector";
+import Avatar from "@/components/ui/Avatar";
 import { EQUIPMENTS } from "@/lib/property-form";
 import type { PropertyFormState } from "@/types/property-form";
 
@@ -134,20 +134,7 @@ function HostCard({
       <div className="mt-4">
         <p className="text-sm font-semibold text-kasa-black">Photo de profil</p>
         <div className="mt-1.5">
-          {hostPicture ? (
-            <Image
-              src={hostPicture}
-              alt=""
-              width={HOST_PICTURE_SIZE}
-              height={HOST_PICTURE_SIZE}
-              className="rounded-lg object-cover"
-            />
-          ) : (
-            <div
-              aria-hidden="true"
-              className="h-16 w-16 rounded-lg bg-kasa-gray-light"
-            />
-          )}
+          <Avatar src={hostPicture} size={HOST_PICTURE_SIZE} rounded="rounded-lg" />
         </div>
       </div>
     </div>

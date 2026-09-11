@@ -1,6 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
 import ArrowLeftIcon from "@/components/icons/ArrowLeftIcon";
+import Avatar from "@/components/ui/Avatar";
 import { formatListTime, truncate } from "@/lib/messages-format";
 import type { ThreadSummary } from "@/types/message";
 
@@ -41,18 +41,7 @@ export default function ThreadList({
                   thread.user.id === activeUserId ? "bg-kasa-light-orange" : ""
                 }`}
               >
-                {thread.user.picture ? (
-                  <Image
-                    src={thread.user.picture}
-                    alt=""
-                    width={AVATAR_SIZE}
-                    height={AVATAR_SIZE}
-                    className="h-11 w-11 flex-none rounded-md object-cover"
-                  />
-                ) : (
-                  <div className="h-11 w-11 flex-none rounded-md bg-kasa-gray-light" />
-                )}
-
+                <Avatar src={thread.user.picture} size={AVATAR_SIZE} />
                 <div className="min-w-0 flex-1">
                   <div className="flex items-baseline justify-between gap-3">
                     <span className="truncate font-semibold text-kasa-black">

@@ -1,3 +1,4 @@
+import Avatar from "@/components/ui/Avatar";
 import { formatListTime } from "@/lib/messages-format";
 import type { ThreadMessage } from "@/types/message";
 
@@ -15,12 +16,7 @@ export default function MessageBubble({
       <div
         className={`flex items-center gap-2 ${isOwn ? "flex-row-reverse" : ""}`}
       >
-        {/* The mockup draws a plain dark square here, not the participant's
-            photo, on both sides of the thread. */}
-        <span
-          aria-hidden="true"
-          className="h-8 w-8 flex-none rounded-md bg-kasa-gray-dark"
-        />
+        <Avatar src={null} size={32} />
         <p className="text-xs text-kasa-gray-dark">
           {participantName} • {formatListTime(message.created_at)}
         </p>

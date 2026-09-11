@@ -1,5 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
+import Avatar from "@/components/ui/Avatar";
 import type { PropertyHost } from "@/types/property";
 
 const PICTURE_SIZE = 80;
@@ -18,17 +18,7 @@ export default function HostCard({
       <h2>Votre hôte</h2>
 
       <div className="mt-4 flex items-center gap-4">
-        {host.picture ? (
-          <Image
-            src={host.picture}
-            alt=""
-            width={PICTURE_SIZE}
-            height={PICTURE_SIZE}
-            className="flex-none rounded-lg object-cover"
-          />
-        ) : (
-          <div className="h-20 w-20 flex-none rounded-lg bg-kasa-gray-light" />
-        )}
+        <Avatar src={host.picture} size={PICTURE_SIZE} rounded="rounded-lg" />
 
         <p>{host.name}</p>
 
