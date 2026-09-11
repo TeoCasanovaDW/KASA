@@ -2,6 +2,7 @@
 
 // No server-only imports: stays renderable under Vitest.
 import { useState } from "react";
+import PlusIcon from "@/components/icons/PlusIcon";
 import { PREDEFINED_TAGS, normalizeTag } from "@/lib/property-form";
 
 function sameTag(a: string, b: string) {
@@ -88,12 +89,16 @@ export default function TagSelector() {
             className="h-10 min-w-0 flex-1 rounded-lg border border-kasa-gray-light px-4 text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-kasa-red"
           />
 
+          {/* Text kept as the accessible name (aria-label), icon-only
+              visually, matching the red square buttons on the image
+              inputs. */}
           <button
             type="button"
             onClick={addCustomTag}
-            className="flex-none rounded-lg bg-kasa-gray-light px-4 py-2 text-sm font-semibold text-kasa-black"
+            aria-label="+Ajouter un tag"
+            className="flex h-10 w-10 flex-none items-center justify-center rounded-lg bg-kasa-red text-kasa-white transition-colors hover:bg-kasa-dark-orange"
           >
-            +Ajouter un tag
+            <PlusIcon />
           </button>
         </div>
       </div>

@@ -2,6 +2,7 @@
 
 // No server-only imports: stays renderable under Vitest, like AuthField.
 import { useEffect, useRef, useState } from "react";
+import PlusIcon from "@/components/icons/PlusIcon";
 import { validateImageFile } from "@/lib/property-form";
 
 /**
@@ -104,20 +105,24 @@ export default function ImageInput({
       </label>
 
       <div className="mt-1.5 flex items-center gap-3">
-        {previewUrl ? (
+        {previewUrl && (
           // eslint-disable-next-line @next/next/no-img-element -- object URL, not a static/remote asset next/image can optimize.
           <img
             src={previewUrl}
             alt=""
-            className="h-12 w-12 flex-none rounded-lg object-cover"
-          />
-        ) : (
-          <div
-            aria-hidden="true"
-            className="h-12 w-12 flex-none rounded-lg bg-kasa-gray-light"
+            className="h-10 w-10 flex-none rounded-lg object-cover"
           />
         )}
 
+        <div className="flex h-10 min-w-0 flex-1 items-center rounded-lg border border-kasa-gray-light px-4 text-sm text-kasa-gray-dark">
+          <span className="truncate">
+            {file ? file.name : "Aucun fichier choisi"}
+          </span>
+        </div>
+
+        {/* Visually hidden: the label above already gives it its accessible
+            name. The red button below is the visible way to open the file
+            picker, matching the mockup's input-plus-button row. */}
         <input
           ref={inputRef}
           id={id}
@@ -128,22 +133,30 @@ export default function ImageInput({
           onChange={handleChange}
           aria-invalid={error ? "true" : undefined}
           aria-describedby={error ? errorId : undefined}
-          className="min-w-0 flex-1 text-sm text-kasa-gray-dark file:mr-3 file:rounded-lg file:border-0 file:bg-kasa-gray-light file:px-3 file:py-2 file:text-sm file:font-semibold file:text-kasa-black"
+          className="sr-only"
         />
 
-        {file && (
-          <button
-            type="button"
-            onClick={handleRemove}
-            className="flex-none text-xs font-semibold text-kasa-red"
-          >
-            Retirer
-          </button>
-        )}
+        {/* Distinct from `label` on purpose: an identical aria-label would
+            give `getByLabelText(label)` a second match (the hidden input
+            already owns that name via the heading label above). */}
+        <button
+          type="button"
+          onClick={() => inputRef.current?.click()}
+          aria-label={`Choisir un fichier pour ${label}`}
+          className="flex h-10 w-10 flex-none items-center justify-center rounded-lg bg-kasa-red text-kasa-white transition-colors hover:bg-kasa-dark-orange"
+        >
+          <PlusIcon />
+        </button>
       </div>
 
       {file && (
-        <p className="mt-1 text-xs text-kasa-gray-dark">{file.name}</p>
+        <button
+          type="button"
+          onClick={handleRemove}
+          className="mt-1 text-xs font-semibold text-kasa-red"
+        >
+          Retirer
+        </button>
       )}
 
       {error && (

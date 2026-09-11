@@ -125,7 +125,7 @@ function HostCard({
   hostPicture: string | null;
 }) {
   return (
-    <div className="rounded-2xl border border-kasa-gray-light p-4">
+    <div className="rounded-2xl bg-kasa-white p-6 shadow-sm md:p-10">
       <div>
         <p className="text-sm font-semibold text-kasa-black">Nom de l&apos;hôte</p>
         <p className="mt-1 text-sm text-kasa-gray-dark">{hostName}</p>
@@ -183,74 +183,82 @@ export default function PropertyForm({
       )}
 
       <div className="grid gap-8 md:grid-cols-2">
-        <div className="flex flex-col gap-5">
-          <TextField
-            id="title"
-            name="title"
-            label="Titre de la propriété"
-            placeholder="Ex : Appartement cosy au coeur de paris"
-            defaultValue={values.title}
-            error={fieldErrors.title}
-            required
-          />
-          <DescriptionField defaultValue={values.description} error={fieldErrors.description} />
-          <TextField
-            id="postalCode"
-            name="postalCode"
-            label="Code postal"
-            pattern="\d{5}"
-            inputMode="numeric"
-            defaultValue={values.postalCode}
-            error={fieldErrors.postalCode}
-            required
-          />
-          <TextField
-            id="location"
-            name="location"
-            label="Localisation"
-            defaultValue={values.location}
-            error={fieldErrors.location}
-            required
-          />
-          <TextField
-            id="price"
-            name="price"
-            label="Prix par nuit (€)"
-            type="number"
-            min="0.01"
-            step="0.01"
-            defaultValue={values.price}
-            error={fieldErrors.price}
-            required
-          />
-
-          <EquipmentsField />
-        </div>
-
-        <div className="flex flex-col gap-5">
-          <div>
-            <ImageInput
-              id="cover"
-              name="cover"
-              label="Image de couverture"
+        <div className="flex flex-col gap-8">
+          <div className="flex flex-col gap-5 rounded-2xl bg-kasa-white p-6 shadow-sm md:p-10">
+            <TextField
+              id="title"
+              name="title"
+              label="Titre de la propriété"
+              placeholder="Ex : Appartement cosy au coeur de paris"
+              defaultValue={values.title}
+              error={fieldErrors.title}
               required
-              onValidityChange={setCoverInvalid}
             />
-            {fieldErrors.cover && (
-              <p className="mt-1 text-xs text-kasa-red">{fieldErrors.cover}</p>
-            )}
+            <DescriptionField defaultValue={values.description} error={fieldErrors.description} />
+            <TextField
+              id="postalCode"
+              name="postalCode"
+              label="Code postal"
+              pattern="\d{5}"
+              inputMode="numeric"
+              defaultValue={values.postalCode}
+              error={fieldErrors.postalCode}
+              required
+            />
+            <TextField
+              id="location"
+              name="location"
+              label="Localisation"
+              defaultValue={values.location}
+              error={fieldErrors.location}
+              required
+            />
+            <TextField
+              id="price"
+              name="price"
+              label="Prix par nuit (€)"
+              type="number"
+              min="0.01"
+              step="0.01"
+              defaultValue={values.price}
+              error={fieldErrors.price}
+              required
+            />
           </div>
 
-          <div>
-            <PicturesField onValidityChange={setPicturesInvalid} />
-            {fieldErrors.pictures && (
-              <p className="mt-1 text-xs text-kasa-red">{fieldErrors.pictures}</p>
-            )}
+          <div className="rounded-2xl bg-kasa-white p-6 shadow-sm md:p-10">
+            <EquipmentsField />
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-8">
+          <div className="flex flex-col gap-5 rounded-2xl bg-kasa-white p-6 shadow-sm md:p-10">
+            <div>
+              <ImageInput
+                id="cover"
+                name="cover"
+                label="Image de couverture"
+                required
+                onValidityChange={setCoverInvalid}
+              />
+              {fieldErrors.cover && (
+                <p className="mt-1 text-xs text-kasa-red">{fieldErrors.cover}</p>
+              )}
+            </div>
+
+            <div>
+              <PicturesField onValidityChange={setPicturesInvalid} />
+              {fieldErrors.pictures && (
+                <p className="mt-1 text-xs text-kasa-red">{fieldErrors.pictures}</p>
+              )}
+            </div>
           </div>
 
           <HostCard hostName={hostName} hostPicture={hostPicture} />
 
-          <TagSelector />
+          <div className="rounded-2xl bg-kasa-white p-6 shadow-sm md:p-10">
+            <TagSelector />
+          </div>
         </div>
       </div>
     </form>

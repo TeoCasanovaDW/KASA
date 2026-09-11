@@ -2,6 +2,7 @@
 
 // No server-only imports: stays renderable under Vitest, like ImageInput.
 import { useRef, useState } from "react";
+import MinusIcon from "@/components/icons/MinusIcon";
 import ImageInput from "@/components/property/ImageInput";
 import { MAX_PICTURES } from "@/lib/property-form";
 
@@ -59,9 +60,10 @@ export default function PicturesField({
               <button
                 type="button"
                 onClick={() => removeRow(row.id)}
-                className="mb-1 flex-none text-xs font-semibold text-kasa-red"
+                aria-label="Retirer cette image"
+                className="flex h-10 w-10 flex-none items-center justify-center rounded-lg bg-kasa-red text-kasa-white transition-colors hover:bg-kasa-dark-orange"
               >
-                Retirer cette image
+                <MinusIcon />
               </button>
             )}
           </div>
