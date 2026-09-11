@@ -147,7 +147,7 @@ export async function createPropertyAction(
       price_per_night: pricePerNight,
       cover: coverUrl,
       host_id: user.id,
-      pictures: pictureUrls,
+      pictures: [coverUrl, ...pictureUrls],
       equipments: readEquipments(formData),
       tags: readTags(formData),
     });
