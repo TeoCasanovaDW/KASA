@@ -96,8 +96,11 @@ describe("PropertyForm", () => {
     await fillRequired(user);
     submit();
 
-    const title = await screen.findByLabelText("Titre de la propriété");
-    expect(title).toHaveAttribute("aria-invalid", "true");
+    // The input already exists before the submit, so `findBy` resolves on its
+    // first poll and would assert before the action's re-render lands. Wait on
+    // the attribute itself, not on the element.
+    const title = screen.getByLabelText("Titre de la propriété");
+    await vi.waitFor(() => expect(title).toHaveAttribute("aria-invalid", "true"));
     expect(title).toHaveAccessibleDescription("Ce champ est requis.");
   });
 
@@ -149,6 +152,72 @@ describe("PropertyForm", () => {
     await user.click(screen.getByRole("button", { name: "+Ajouter un tag" }));
 
     expect(hiddenTags()).toEqual(["Parc", "Spa"]);
+  });
+
+  it("shows a custom tag as a pressed chip that toggles back off", async () => {
+    const user = userEvent.setup();
+    const { container } = renderForm(stubAction());
+    const hiddenTags = () =>
+      Array.from(
+        container.querySelectorAll<HTMLInputElement>('input[name="tags"]'),
+      ).map((input) => input.value);
+
+    await user.type(
+      screen.getByLabelText("Ajouter une catégorie personnalisée"),
+      "Spa",
+    );
+    await user.click(screen.getByRole("button", { name: "+Ajouter un tag" }));
+
+    // The regression: the tag reached the hidden inputs but had no chip, so
+    // adding one looked like nothing happened and it could never be removed.
+    const chip = screen.getByRole("button", { name: "Spa" });
+    expect(chip).toHaveAttribute("aria-pressed", "true");
+
+    await user.click(chip);
+
+    expect(screen.queryByRole("button", { name: "Spa" })).not.toBeInTheDocument();
+    expect(hiddenTags()).toEqual([]);
+  });
+
+  it("adds a custom tag on Enter, ignores blanks, and does not submit the form", async () => {
+    const user = userEvent.setup();
+    const action = stubAction();
+    const { container } = renderForm(action);
+    const draft = () =>
+      screen.getByLabelText("Ajouter une catégorie personnalisée");
+    const hiddenTags = () =>
+      Array.from(
+        container.querySelectorAll<HTMLInputElement>('input[name="tags"]'),
+      ).map((input) => input.value);
+
+    await user.type(draft(), "   {Enter}");
+
+    expect(hiddenTags()).toEqual([]);
+
+    await user.type(draft(), "  Spa  {Enter}");
+
+    expect(hiddenTags()).toEqual(["Spa"]);
+    expect(screen.getByRole("button", { name: "Spa" })).toBeInTheDocument();
+    expect(draft()).toHaveValue("");
+    // Enter inside the custom-tag input must never reach the page form.
+    expect(action).not.toHaveBeenCalled();
+  });
+
+  it("submits the custom tag in the tags FormData", async () => {
+    const user = userEvent.setup();
+    const action = stubAction();
+    renderForm(action);
+
+    await user.click(screen.getByRole("button", { name: "Parc" }));
+    await user.type(
+      screen.getByLabelText("Ajouter une catégorie personnalisée"),
+      "Spa{Enter}",
+    );
+    await fillRequired(user);
+    submit();
+
+    await vi.waitFor(() => expect(action).toHaveBeenCalled());
+    expect(action.mock.calls[0][1].getAll("tags")).toEqual(["Parc", "Spa"]);
   });
 
   it("adds picture rows up to the cap, then hides the add control", async () => {

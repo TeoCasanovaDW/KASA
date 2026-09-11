@@ -9,6 +9,16 @@ function sameTag(a: string, b: string) {
   return a.toLowerCase() === b.toLowerCase();
 }
 
+function isPredefined(tag: string) {
+  return PREDEFINED_TAGS.some((predefined) => sameTag(predefined, tag));
+}
+
+function chipClassName(pressed: boolean) {
+  return pressed
+    ? "rounded-full bg-kasa-red px-4 py-2 text-sm text-kasa-white"
+    : "rounded-full bg-kasa-gray-light px-4 py-2 text-sm text-kasa-black";
+}
+
 /**
  * Predefined chips plus custom tag creation. Selected tags render as hidden
  * `name="tags"` inputs so the action reads them with `formData.getAll("tags")`.
@@ -17,7 +27,12 @@ export default function TagSelector() {
   const [selected, setSelected] = useState<string[]>([]);
   const [draft, setDraft] = useState("");
 
-  function togglePredefined(tag: string) {
+  // Chips for everything the predefined row does not already show, in the
+  // order it was added: without this a custom tag is only a hidden input, so
+  // adding one looks like nothing happened and it can never be removed.
+  const customTags = selected.filter((tag) => !isPredefined(tag));
+
+  function toggleTag(tag: string) {
     setSelected((prev) =>
       prev.some((selectedTag) => sameTag(selectedTag, tag))
         ? prev.filter((selectedTag) => !sameTag(selectedTag, tag))
@@ -60,12 +75,8 @@ export default function TagSelector() {
               key={tag}
               type="button"
               aria-pressed={pressed}
-              onClick={() => togglePredefined(tag)}
-              className={
-                pressed
-                  ? "rounded-full bg-kasa-red px-4 py-2 text-sm text-kasa-white"
-                  : "rounded-full bg-kasa-gray-light px-4 py-2 text-sm text-kasa-black"
-              }
+              onClick={() => toggleTag(tag)}
+              className={chipClassName(pressed)}
             >
               {tag}
             </button>
@@ -102,6 +113,22 @@ export default function TagSelector() {
           </button>
         </div>
       </div>
+
+      {customTags.length > 0 && (
+        <div className="mt-3 flex flex-wrap gap-2">
+          {customTags.map((tag) => (
+            <button
+              key={tag}
+              type="button"
+              aria-pressed
+              onClick={() => toggleTag(tag)}
+              className={chipClassName(true)}
+            >
+              {tag}
+            </button>
+          ))}
+        </div>
+      )}
 
       {selected.map((tag) => (
         <input key={tag} type="hidden" name="tags" value={tag} />
