@@ -115,7 +115,7 @@ export default function CarouselOverlay({
           </button>
         </div>
 
-        <div className="relative mx-auto aspect-[16/10] max-h-[80vh] w-full overflow-hidden rounded-lg">
+        <div className="relative mx-auto aspect-[16/10] max-h-[80vh] w-full overflow-hidden rounded-lg bg-kasa-white">
           <Image
             src={pictures[index]}
             alt={`${title} — photo ${index + 1} sur ${total}`}

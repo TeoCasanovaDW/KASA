@@ -61,7 +61,7 @@ export default function PropertyGallery({
               type="button"
               onClick={() => setOpenIndex(index)}
               aria-label={`Ouvrir la photo ${index + 1} sur ${displayed.length}`}
-              className={`relative cursor-pointer overflow-hidden rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-kasa-red ${
+              className={`relative cursor-pointer overflow-hidden rounded-lg bg-kasa-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-kasa-red ${
                 isFirst
                   ? `row-span-2 ${smallCount === 0 ? "col-span-4" : "col-span-2"}`
                   : smallTileClassName(smallCount, index - 1)
@@ -90,7 +90,7 @@ export default function PropertyGallery({
           type="button"
           onClick={() => setOpenIndex(0)}
           aria-label={`Ouvrir la photo 1 sur ${displayed.length}`}
-          className="relative aspect-[6/7] w-full cursor-pointer overflow-hidden rounded-2xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-kasa-red"
+          className="relative aspect-[6/7] w-full cursor-pointer overflow-hidden rounded-2xl bg-kasa-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-kasa-red"
         >
           <Image
             src={displayed[0]}
@@ -112,7 +112,7 @@ export default function PropertyGallery({
                   type="button"
                   onClick={() => setOpenIndex(realIndex)}
                   aria-label={`Ouvrir la photo ${realIndex + 1} sur ${displayed.length}`}
-                  className="relative aspect-square w-24 flex-none cursor-pointer overflow-hidden rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-kasa-red"
+                  className="relative aspect-square w-24 flex-none cursor-pointer overflow-hidden rounded-lg bg-kasa-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-kasa-red"
                 >
                   <Image
                     src={picture}
