@@ -52,6 +52,7 @@ export default async function HeaderAuth({
       picture={picture}
       logoutAction={logoutAction}
       showName={variant === "mobile"}
+      showListings={user.role === "owner" || user.role === "admin"}
     />
   );
 }

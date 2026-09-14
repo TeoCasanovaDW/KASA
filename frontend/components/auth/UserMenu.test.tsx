@@ -4,9 +4,15 @@ import { describe, expect, it, vi } from "vitest";
 import UserMenu from "./UserMenu";
 
 const TRIGGER_NAME = "Marie, ouvrir le menu du compte";
+const PROFILE_NAME = "Mon profil";
+const LISTINGS_NAME = "Mes annonces";
 const LOGOUT_NAME = "Se déconnecter";
 
-function renderMenu(picture: string | null = null, showName = false) {
+function renderMenu(
+  picture: string | null = null,
+  showName = false,
+  showListings = false,
+) {
   const logoutAction = vi.fn(() => Promise.resolve());
   render(
     <UserMenu
@@ -14,6 +20,7 @@ function renderMenu(picture: string | null = null, showName = false) {
       picture={picture}
       logoutAction={logoutAction}
       showName={showName}
+      showListings={showListings}
     />,
   );
 
@@ -21,6 +28,8 @@ function renderMenu(picture: string | null = null, showName = false) {
 }
 
 const trigger = () => screen.getByRole("button", { name: TRIGGER_NAME });
+const profileLink = () => screen.queryByRole("link", { name: PROFILE_NAME });
+const listingsLink = () => screen.queryByRole("link", { name: LISTINGS_NAME });
 const logout = () => screen.queryByRole("button", { name: LOGOUT_NAME });
 
 describe("UserMenu", () => {
@@ -46,14 +55,34 @@ describe("UserMenu", () => {
     );
   });
 
-  it("opens the menu on click and focuses the logout control", async () => {
+  it("opens the menu on click and focuses the first item", async () => {
     const user = userEvent.setup();
     renderMenu();
 
     await user.click(trigger());
 
     expect(trigger()).toHaveAttribute("aria-expanded", "true");
-    expect(logout()).toHaveFocus();
+    expect(profileLink()).toHaveFocus();
+  });
+
+  it("shows both account links for an owner", async () => {
+    const user = userEvent.setup();
+    renderMenu(null, false, true);
+
+    await user.click(trigger());
+
+    expect(profileLink()).toHaveAttribute("href", "/profil");
+    expect(listingsLink()).toHaveAttribute("href", "/mes-annonces");
+  });
+
+  it("hides Mes annonces for a client", async () => {
+    const user = userEvent.setup();
+    renderMenu(null, false, false);
+
+    await user.click(trigger());
+
+    expect(profileLink()).toBeInTheDocument();
+    expect(listingsLink()).not.toBeInTheDocument();
   });
 
   it("submits the existing logout action from the menu", async () => {

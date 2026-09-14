@@ -1,26 +1,33 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useId, useRef, useState } from "react";
 import Avatar from "@/components/ui/Avatar";
 
 const AVATAR_SIZE = 36;
+const MENU_ITEM_CLASSES = "block w-full cursor-pointer rounded-md px-3 py-2 text-left";
+const FOCUSABLE_SELECTOR = "a[href], button:not([disabled])";
 
 /**
  * The header's account control: the user's avatar as a disclosure trigger for
- * a small menu holding the logout form. `logoutAction` is passed in rather
- * than imported so this stays a plain Client Component (see MessageComposer
- * for the same arrangement).
+ * a small menu holding links to the account pages and the logout form.
+ * `logoutAction` is passed in rather than imported so this stays a plain
+ * Client Component (see MessageComposer for the same arrangement). Purely
+ * presentational: it fetches nothing and receives everything it renders as
+ * props.
  */
 export default function UserMenu({
   name,
   picture,
   logoutAction,
   showName = false,
+  showListings,
 }: {
   name: string;
   picture: string | null;
   logoutAction: () => Promise<void>;
   showName?: boolean;
+  showListings: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -31,7 +38,7 @@ export default function UserMenu({
   useEffect(() => {
     if (!open) return;
 
-    menuRef.current?.querySelector("button")?.focus();
+    menuRef.current?.querySelector<HTMLElement>(FOCUSABLE_SELECTOR)?.focus();
 
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key !== "Escape") return;
@@ -81,11 +88,16 @@ export default function UserMenu({
           id={menuId}
           className="absolute top-full right-0 z-50 mt-2 min-w-40 rounded-lg bg-kasa-white p-2 text-sm shadow-md"
         >
+          <Link href="/profil" className={MENU_ITEM_CLASSES}>
+            Mon profil
+          </Link>
+          {showListings && (
+            <Link href="/mes-annonces" className={MENU_ITEM_CLASSES}>
+              Mes annonces
+            </Link>
+          )}
           <form action={logoutAction}>
-            <button
-              type="submit"
-              className="w-full cursor-pointer rounded-md px-3 py-2 text-left"
-            >
+            <button type="submit" className={MENU_ITEM_CLASSES}>
               Se déconnecter
             </button>
           </form>
