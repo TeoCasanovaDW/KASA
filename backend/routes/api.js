@@ -42,7 +42,9 @@ router.post('/messages', requireAuth, messages.send);
 router.patch('/messages/:userId/read', requireAuth, messages.markRead);
 
 // Uploads
-router.post('/uploads/image', requireRole(['owner','admin']), uploads.uploadImage);
+// Any authenticated user may upload; the controller restricts every purpose other
+// than user-picture to owner/admin, once the multipart body exposes it.
+router.post('/uploads/image', requireAuth, uploads.uploadImage);
 
 // Delete one or multiple uploaded images by filename or URL
 router.delete('/uploads/images', requireRole(['owner','admin']), uploads.deleteImages);

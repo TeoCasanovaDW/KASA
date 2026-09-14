@@ -367,7 +367,7 @@
       "post": {
         "tags": ["Uploads"],
         "summary": "Upload an image and get a URL",
-        "description": "Process: 1) Upload an image to get a public URL. 2) Use the returned URL depending on the purpose: property-cover -> PATCH /api/properties/{id} with {\n\t\"cover\": \"<url>\" }, property-picture -> include the URL in the pictures array when creating a property, user-picture -> PATCH /api/users/{id} with { \"picture\": \"<url>\" }.",
+        "description": "Access: any authenticated user for purpose=user-picture, owner or admin for every other purpose. Process: 1) Upload an image to get a public URL. 2) Use the returned URL depending on the purpose: property-cover -> PATCH /api/properties/{id} with {\n\t\"cover\": \"<url>\" }, property-picture -> include the URL in the pictures array when creating a property, user-picture -> PATCH /api/users/{id} with { \"picture\": \"<url>\" }.",
         "security": [ { "BearerAuth": [] } ],
         "requestBody": {
           "required": true,
@@ -389,7 +389,7 @@
           "201": { "description": "Uploaded", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UploadResponse" } } } },
           "400": { "description": "Validation error (non-image or missing file)", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
           "401": { "description": "Authentication required", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
-          "403": { "description": "Forbidden (owner or admin only)", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+          "403": { "description": "Forbidden (owner or admin required for a purpose other than user-picture)", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
           "404": { "description": "Property not found for provided property_id", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
           "500": { "description": "Upload not available (multer missing)", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
         }

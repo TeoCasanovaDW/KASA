@@ -97,7 +97,7 @@ Base: /api
 - POST /api/messages: envoyer un message (recipient_id, body, property_id facultatif). L’expéditeur est toujours l’utilisateur authentifié (jamais un champ du body).
 - PATCH /api/messages/:userId/read: marquer comme lus tous les messages reçus de :userId. C’est le seul moyen de faire évoluer l’état de lecture (idempotent; un GET n’a aucun effet).
 
-- POST /api/uploads/image: uploader une image (rôle: owner ou admin). Répond avec une URL publique /uploads/... et des instructions pour l’utiliser (cover, gallery, etc.).
+- POST /api/uploads/image: uploader une image (rôle: tout utilisateur authentifié pour `purpose=user-picture`, sinon owner ou admin). Répond avec une URL publique /uploads/... et des instructions pour l’utiliser (cover, gallery, etc.).
 - DELETE /api/uploads/images: supprimer une ou plusieurs images (rôle: owner ou admin). Accepte des noms de fichiers ou des URLs; nettoie les références en base.
 
 ## Upload & suppression d’images

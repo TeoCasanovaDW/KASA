@@ -33,6 +33,14 @@ async function uploadImage(req, res) {
     const purpose = (req.body && String(req.body.purpose || '').toLowerCase()) || null; // property-cover | property-picture | user-picture | other
     const propertyId = req.body && req.body.property_id ? String(req.body.property_id) : null;
 
+    // The route only requires authentication: 'purpose' is unreadable until multer
+    // has parsed the body, so the owner/admin check for every other purpose lands
+    // here. The file is already on disk at this point, hence the unlink.
+    if (purpose !== 'user-picture' && !['owner', 'admin'].includes(req.user && req.user.role)) {
+      try { fs.unlinkSync(req.file.path); } catch (_) {}
+      return res.status(403).json({ error: 'insufficient role' });
+    }
+
     // If a property_id is provided, ensure it exists (for better UX)
     if (propertyId) {
       try {
