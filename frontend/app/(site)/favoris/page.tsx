@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import Container from "@/components/layout/Container";
 import FavoritesGrid from "@/components/favorites/FavoritesGrid";
+import GuestFavoritesGrid from "@/components/favorites/GuestFavoritesGrid";
 import { getProperties } from "@/lib/properties";
+import { getFavorites } from "@/lib/favorites-api";
+import { getSessionUser } from "@/lib/session";
 import { ApiError } from "@/lib/api-client";
 import type { Property } from "@/types/property";
 
@@ -13,11 +16,14 @@ export const metadata: Metadata = {
 };
 
 export default async function FavorisPage() {
+  const user = await getSessionUser();
   let properties: Property[] = [];
   let loadFailed = false;
 
   try {
-    properties = await getProperties();
+    // Signed in, the account list is already the answer. Signed out, the full
+    // list is fetched and filtered client-side against `localStorage`.
+    properties = user ? await getFavorites(user.id) : await getProperties();
   } catch (error) {
     if (error instanceof ApiError) {
       loadFailed = true;
@@ -44,8 +50,10 @@ export default async function FavorisPage() {
           <p className="mt-12 text-center text-kasa-gray-dark md:mt-16">
             Les logements n&apos;ont pas pu être chargés. Réessayez plus tard.
           </p>
-        ) : (
+        ) : user ? (
           <FavoritesGrid properties={properties} />
+        ) : (
+          <GuestFavoritesGrid properties={properties} />
         )}
       </div>
     </div>

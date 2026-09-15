@@ -78,7 +78,7 @@ Le projet est découpé en deux services indépendants : le frontend Next.js con
 - Le App Router regroupe les pages en deux groupes de routes : `(site)` pour les pages avec Header/Footer partagés (accueil, logement, favoris, connexion, inscription, ajout de logement, à propos), et `(messagerie)` pour `/messagerie`, qui s'affiche sans le chrome partagé sur desktop.
 - `frontend/lib/` est l'unique frontière d'accès à l'API : chaque appel HTTP passe par `apiFetch` (dans `api-client.ts`), qui centralise la construction de l'URL et la normalisation des erreurs. Aucun composant n'appelle `fetch` directement vers l'API Express.
 - Les écritures (connexion, inscription, envoi de message, création de logement) passent par des Server Actions, qui appellent l'API côté serveur puis invalident le cache Next.js concerné (`revalidatePath`/`updateTag`).
-- Les favoris sont gérés uniquement côté client, via `favorites-storage.ts` et `localStorage` : ils ne transitent jamais par l'API.
+- Les favoris ont deux modes : connecté, ils sont rattachés au compte et passent par l'API (`favorites-api.ts` et la Server Action `favorites-actions.ts`, sur `POST`/`DELETE /api/properties/:id/favorite` et `GET /api/users/:id/favorites`) ; déconnecté, ils restent dans le navigateur via `favorites-storage.ts` et `localStorage`. Aucun chemin connecté ne lit ni n'écrit le `localStorage`, et les deux listes ne sont jamais fusionnées.
 - Aucune requête du navigateur n'atteint directement l'API Express : toute lecture ou écriture passe par le serveur Next.js, qui est aussi ce qui rend le CORS inutile côté backend.
 
 ## Déploiement
