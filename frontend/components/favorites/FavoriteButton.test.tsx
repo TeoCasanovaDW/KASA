@@ -4,10 +4,11 @@ import { beforeEach, describe, expect, it } from "vitest";
 import FavoriteButton from "./FavoriteButton";
 import { FavoritesProvider } from "./FavoritesProvider";
 import { readFavoriteIds, writeFavoriteIds } from "@/lib/favorites-storage";
+import type { Property } from "@/types/property";
 
 const STORAGE_KEY = "kasa:favorites";
 
-function renderButton(propertyId: string) {
+function renderButton(propertyId: Property["id"]) {
   return render(
     <FavoritesProvider>
       <FavoriteButton propertyId={propertyId} />

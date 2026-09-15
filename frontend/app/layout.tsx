@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { FavoritesProvider } from "@/components/favorites/FavoritesProvider";
 import { getSiteUrl } from "@/lib/env";
 import { buildWebSiteJsonLd, serializeJsonLd } from "@/lib/structured-data";
 import "./globals.css";
@@ -43,7 +42,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             __html: serializeJsonLd(buildWebSiteJsonLd(getSiteUrl())),
           }}
         />
-        <FavoritesProvider>{children}</FavoritesProvider>
+        {children}
       </body>
     </html>
   );

@@ -1,3 +1,11 @@
+import type { Property } from "@/types/property";
+
+/**
+ * The guest-only favorites path, by design and not by omission: a signed-in
+ * visitor's favorites live in the backend (`lib/favorites-api.ts`), and no
+ * signed-in code path reads or writes this module.
+ */
+
 const FAVORITES_STORAGE_KEY = "kasa:favorites";
 
 /**
@@ -5,7 +13,7 @@ const FAVORITES_STORAGE_KEY = "kasa:favorites";
  * missing key, malformed JSON, JSON that isn't an array, or an
  * unavailable/throwing storage (SSR, private mode) all resolve to `[]`.
  */
-export function readFavoriteIds(): string[] {
+export function readFavoriteIds(): Property["id"][] {
   if (typeof window === "undefined") {
     return [];
   }
@@ -18,7 +26,7 @@ export function readFavoriteIds(): string[] {
       return [];
     }
 
-    return parsed.filter((id): id is string => typeof id === "string");
+    return parsed.filter((id): id is Property["id"] => typeof id === "string");
   } catch {
     return [];
   }
@@ -28,7 +36,7 @@ export function readFavoriteIds(): string[] {
  * Writes the favorited property ids to localStorage. Never throws: an
  * unavailable/throwing storage (SSR, private mode, quota) is a silent no-op.
  */
-export function writeFavoriteIds(ids: string[]): void {
+export function writeFavoriteIds(ids: Property["id"][]): void {
   if (typeof window === "undefined") {
     return;
   }

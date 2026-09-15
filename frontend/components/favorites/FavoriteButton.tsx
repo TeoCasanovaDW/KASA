@@ -1,11 +1,12 @@
 "use client";
 
 import { useFavorites } from "@/components/favorites/FavoritesProvider";
+import type { Property } from "@/types/property";
 
 export default function FavoriteButton({
   propertyId,
 }: {
-  propertyId: string;
+  propertyId: Property["id"];
 }) {
   const { isFavorite, toggleFavorite } = useFavorites();
   const favorite = isFavorite(propertyId);
