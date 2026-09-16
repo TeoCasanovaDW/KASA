@@ -4,7 +4,7 @@
 import { validateImageFile } from "./property-form";
 
 // Below the 10 Mo property uploads allow: an avatar travels through a Server
-// Action, whose request body the Netlify deployment caps well under that.
+// Action, whose request body the Vercel deployment caps at 4.5 MB.
 // `MAX_IMAGE_BYTES` and the property flow are unchanged.
 export const MAX_AVATAR_BYTES = 4 * 1024 * 1024;
 

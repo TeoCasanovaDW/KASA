@@ -85,8 +85,8 @@ Le projet est découpé en deux services indépendants : le frontend Next.js con
 
 ## Intégration continue
 
-GitHub Actions ([`.github/workflows/ci.yml`](./.github/workflows/ci.yml)) s'exécute à chaque push sur `main` et sur chaque pull request. Pour le frontend : installation, lint, tests Vitest, build de production (qui inclut la vérification TypeScript) et build Storybook. Pour le backend : installation propre des dépendances. La CI ne déploie rien : Netlify et Railway buildent eux-mêmes depuis le dépôt.
+GitHub Actions ([`.github/workflows/ci.yml`](./.github/workflows/ci.yml)) s'exécute à chaque push sur `main` et sur chaque pull request. Pour le frontend : installation, lint, tests Vitest, build de production (qui inclut la vérification TypeScript) et build Storybook. Pour le backend : installation propre des dépendances. La CI ne déploie rien : Vercel et Railway buildent eux-mêmes depuis le dépôt.
 
 ## Déploiement
 
-Le frontend est hébergé sur Netlify et le backend sur Railway avec un volume persistant pour la base SQLite et les images uploadées. La procédure complète (réglages du tableau de bord Railway, variables Netlify, ordre des étapes, limites connues) est décrite dans [DEPLOYMENT.md](./DEPLOYMENT.md).
+Le frontend est hébergé sur Vercel et le backend sur Railway avec un volume persistant pour la base SQLite et les images uploadées. La procédure complète (réglages du tableau de bord Railway, variables Vercel, ordre des étapes, limites connues) est décrite dans [DEPLOYMENT.md](./DEPLOYMENT.md).

@@ -17,7 +17,6 @@
     "react-dom": "19.2.8"
   },
   "devDependencies": {
-    "@netlify/plugin-nextjs": "^5.15.13",
     "@storybook/addon-a11y": "^10.6.0",
     "@storybook/addon-docs": "^10.6.0",
     "@storybook/nextjs-vite": "^10.6.0",

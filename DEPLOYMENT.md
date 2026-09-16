@@ -1,16 +1,16 @@
 # Déploiement
 
-Procédure complète pour mettre Kasa en ligne : le backend Express sur **Railway**, avec un volume persistant, puis le frontend Next.js sur **Netlify**.
+Procédure complète pour mettre Kasa en ligne : le backend Express sur **Railway**, avec un volume persistant, puis le frontend Next.js sur **Vercel**.
 
-L'ordre compte : Railway d'abord. Tant que l'API n'a pas d'URL publique, la variable `KASA_API_URL` du frontend ne peut pas être renseignée, et le build Netlify en a besoin.
+L'ordre compte : Railway d'abord. Tant que l'API n'a pas d'URL publique, la variable `KASA_API_URL` du frontend ne peut pas être renseignée, et le build Vercel en a besoin.
 
 ## Prérequis
 
 - Le dépôt est poussé sur GitHub (ou GitLab), branche à déployer à jour.
-- Un compte Railway et un compte Netlify, tous deux connectés à ce dépôt.
+- Un compte Railway et un compte Vercel, tous deux connectés à ce dépôt.
 - Aucune installation locale n'est nécessaire : les deux plateformes buildent depuis le dépôt.
 
-Le dépôt contient déjà `netlify.toml` pour le frontend. Il ne contient volontairement aucun fichier de configuration Railway : tous les réglages du backend se font dans le tableau de bord.
+Le dépôt ne contient volontairement aucun fichier de configuration Vercel ni Railway : tous les réglages se font dans les tableaux de bord.
 
 ## 1. Backend sur Railway
 
@@ -35,27 +35,32 @@ Au premier démarrage, le backend crée le répertoire parent de `KASA_DB_PATH` 
 
 Noter l'URL de l'API : elle est nécessaire à l'étape suivante.
 
-## 2. Frontend sur Netlify
+## 2. Frontend sur Vercel
 
-1. **Créer le site** : _Add new site_ → _Import an existing project_ → sélectionner le même dépôt.
-2. **Confirmer la configuration de build** : Netlify lit `netlify.toml` à la racine, qui fournit `base = "frontend"`, `command = "npm run build"` et la version de Node. Les champs proposés dans l'interface doivent correspondre ; ne rien y ajouter, en particulier pas de répertoire de publication ni de plugin : Netlify détecte Next.js et installe son propre runtime.
-3. **Renseigner les variables** dans _Site configuration_ → _Environment variables_ (modèle versionné : `frontend/.env.example`) :
+1. **Importer le projet** : _Add New…_ → _Project_ → importer le même dépôt.
+2. **Définir le répertoire racine** : _Root Directory_ → `frontend`. Vercel détecte alors Next.js (_Framework Preset_ : Next.js). Laisser les commandes de build et d'installation ainsi que le répertoire de sortie par défaut.
+3. **Renseigner les variables** dans _Environment Variables_, avant le premier déploiement (modèle versionné : `frontend/.env.example`) :
 
    | Variable | Valeur à saisir |
    | --- | --- |
    | `KASA_API_URL` | l'URL Railway de l'étape 1, sans barre oblique finale, par exemple `https://<nom-du-service>.up.railway.app` |
-   | `KASA_SITE_URL` | l'URL publique du site Netlify, par exemple `https://<nom-du-site>.netlify.app` |
+   | `KASA_SITE_URL` | l'URL publique de production Vercel, sans barre oblique finale, par exemple `https://<nom-du-projet>.vercel.app` |
 
-   `KASA_SITE_URL` n'est connue qu'une fois le site créé : si le premier déploiement a lieu avant, la renseigner puis relancer un déploiement, sinon les URLs absolues (sitemap, robots, données structurées) pointeront vers `http://localhost:3000`.
+   `KASA_SITE_URL` n'est connue qu'une fois le projet créé : la renseigner ensuite dans _Settings_ → _Environment Variables_, puis relancer un déploiement (_Redeploy_), sinon les URLs absolues (sitemap, robots, données structurées) pointeront vers `http://localhost:3000`.
+
+   Les déploiements _Preview_ reçoivent aussi ces variables par défaut : ils appellent alors la même API Railway, donc la même base de données que la production.
 4. **Déployer**, puis ouvrir l'URL du site.
+5. **Version de Node** : dans _Settings_ → _Build and Deployment_ → _Node.js Version_, choisir `24.x`, la version de la CI. Tout changement s'applique au déploiement suivant.
 
 Ces deux variables sont lues côté serveur uniquement, sans préfixe `NEXT_PUBLIC_`. Toute modification de `KASA_API_URL` impose un **nouveau build**, pas un simple redémarrage : la valeur est figée à la compilation dans la réécriture `/uploads/:path*` de `frontend/next.config.ts`, qui est ce qui rend les images uploadées accessibles en same-origin.
 
+Côté Railway, rien ne dépend de l'URL du frontend : l'API n'enregistre pas de CORS et seul le serveur Next.js l'appelle, jamais le navigateur.
+
 ## Limites connues
 
-**Taille des photos en ligne.** Le formulaire de création envoie les images via une Server Action, exécutée sur Netlify comme une fonction serverless. Les fonctions Netlify n'acceptent qu'un corps de requête de quelques mégaoctets. Le réglage `serverActions.bodySizeLimit` à `80mb` dans `frontend/next.config.ts` (voir `## Request size budget` dans `specs/09-property-creation.md`) ne change rien à ce plafond : c'est une limite de la plateforme, pas un paramètre du projet.
+**Taille des photos en ligne.** Le formulaire de création envoie les images via une Server Action, exécutée sur Vercel comme une fonction serverless. Les fonctions Vercel refusent un corps de requête de plus de 4,5 Mo, toutes photos comprises. Le réglage `serverActions.bodySizeLimit` à `80mb` dans `frontend/next.config.ts` (voir `## Request size budget` dans `specs/09-property-creation.md`) ne change rien à ce plafond : c'est une limite de la plateforme, pas un paramètre du projet.
 
-Conséquence : un envoi qui passe en local peut échouer en ligne. Une seule photo dépassant l'allocation de la fonction suffit à déclencher le refus ; il n'est pas nécessaire d'envoyer sept images.
+Conséquence : un envoi qui passe en local peut échouer en ligne. Le refus se déclenche dès que le total des photos d'un envoi dépasse environ 4,5 Mo ; il n'est pas nécessaire d'envoyer sept images.
 
 Ce que voit l'utilisateur : la requête est rejetée par la plateforme **avant** d'atteindre la Server Action, donc aucun message d'erreur ne s'affiche sous le formulaire. Le bouton reste en état d'envoi puis la soumission échoue, et la console du navigateur montre une réponse d'erreur HTTP (typiquement 413) sur la requête de l'action. Le logement n'est pas créé.
 
@@ -65,7 +70,7 @@ Il s'agit d'une limitation de livraison assumée, pas d'un défaut. Les règles 
 
 ## Vérification après déploiement
 
-À dérouler sur le site Netlify, une fois les deux services en ligne.
+À dérouler sur le site Vercel, une fois les deux services en ligne.
 
 - [ ] `/` affiche la liste des logements, avec leurs images.
 - [ ] Une page `/logements/<slug>` s'ouvre depuis la liste et affiche galerie, description et équipements.
