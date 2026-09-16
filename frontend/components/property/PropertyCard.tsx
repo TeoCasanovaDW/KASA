@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import ImageIcon from "@/components/icons/ImageIcon";
 import type { Property } from "@/types/property";
 
 export default function PropertyCard({
@@ -21,7 +22,9 @@ export default function PropertyCard({
             sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
           />
         ) : (
-          <div className="h-full w-full bg-kasa-gray-light" />
+          <div className="flex h-full w-full items-center justify-center bg-kasa-gray-light">
+            <ImageIcon className="h-12 w-12 text-kasa-gray-dark" />
+          </div>
         )}
         {favoriteControl && (
           <div className="absolute top-3 right-3 z-10">{favoriteControl}</div>

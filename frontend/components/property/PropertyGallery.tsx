@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import ImageIcon from "@/components/icons/ImageIcon";
 import CarouselOverlay from "@/components/property/CarouselOverlay";
 
 const MAX_DESKTOP_TILES = 5;
@@ -34,7 +35,9 @@ export default function PropertyGallery({
 
   if (displayed.length === 0) {
     return (
-      <div className="aspect-[16/9] w-full rounded-2xl bg-kasa-gray-light" />
+      <div className="flex aspect-[16/9] w-full items-center justify-center rounded-2xl bg-kasa-gray-light">
+        <ImageIcon className="h-12 w-12 text-kasa-gray-dark" />
+      </div>
     );
   }
 
