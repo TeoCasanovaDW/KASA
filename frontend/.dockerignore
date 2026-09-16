@@ -1,0 +1,12 @@
+node_modules
+.next
+storybook-static
+coverage
+*.tsbuildinfo
+npm-debug.log*
+# Never copy local env files into the image.
+.env*
+!.env.example
+.vercel
+Dockerfile
+.dockerignore

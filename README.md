@@ -43,6 +43,14 @@ cd frontend && npm run dev
 
 Vérification rapide de l'API : http://localhost:4000/api/properties renvoie la liste des logements en JSON.
 
+### Avec Docker (local uniquement)
+
+```bash
+docker compose up --build
+```
+
+Frontend sur http://localhost:3000, API sur http://localhost:4000. Le serveur Next.js appelle l'API via `http://backend:4000`. La base SQLite et les images uploadées sont conservées dans le volume `kasa-data` (`docker compose down -v` les supprime). `JWT_SECRET` et `KASA_SITE_URL` peuvent être surchargées depuis l'environnement du shell. Docker ne sert pas en production, qui reste sur Vercel + Railway.
+
 ## Variables d'environnement
 
 Frontend, dans `frontend/.env.local` (modèle versionné : `frontend/.env.example`) :

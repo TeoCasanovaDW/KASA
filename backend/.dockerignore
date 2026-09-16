@@ -1,0 +1,10 @@
+node_modules
+npm-debug.log*
+.env*
+!.env.example
+.idea
+# Local runtime data: the container uses its own volume.
+data/kasa.sqlite3
+public/uploads
+Dockerfile
+.dockerignore

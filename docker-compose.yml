@@ -1,0 +1,29 @@
+# Runs Kasa locally. Production stays on Vercel (frontend) + Railway (backend).
+services:
+  backend:
+    build: ./backend
+    environment:
+      PORT: 4000
+      JWT_SECRET: ${JWT_SECRET:-change-me-in-prod}
+      KASA_DB_PATH: /data/kasa.sqlite3
+      KASA_UPLOAD_DIR: /data/uploads
+    volumes:
+      - kasa-data:/data
+    ports:
+      - "4000:4000"
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        KASA_API_URL: http://backend:4000
+    environment:
+      KASA_API_URL: http://backend:4000
+      KASA_SITE_URL: ${KASA_SITE_URL:-http://localhost:3000}
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+volumes:
+  kasa-data:
