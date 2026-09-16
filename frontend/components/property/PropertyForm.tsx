@@ -145,6 +145,7 @@ export default function PropertyForm({
   action,
   hostName,
   hostPicture,
+  reusableTags = [],
 }: {
   action: (
     state: PropertyFormState,
@@ -152,6 +153,7 @@ export default function PropertyForm({
   ) => Promise<PropertyFormState>;
   hostName: string;
   hostPicture: string | null;
+  reusableTags?: string[];
 }) {
   const [state, formAction, pending] = useActionState(action, {});
   const [coverInvalid, setCoverInvalid] = useState(false);
@@ -257,7 +259,7 @@ export default function PropertyForm({
           <HostCard hostName={hostName} hostPicture={hostPicture} />
 
           <div className="rounded-2xl bg-kasa-white p-6 shadow-sm md:p-10">
-            <TagSelector />
+            <TagSelector reusableTags={reusableTags} />
           </div>
         </div>
       </div>

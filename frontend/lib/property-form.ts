@@ -145,3 +145,36 @@ export function parsePrice(raw: string): number | null {
 export function normalizeTag(raw: string): string {
   return raw.trim();
 }
+
+/** Case-insensitive tag equality. */
+export function sameTag(a: string, b: string): boolean {
+  return a.toLowerCase() === b.toLowerCase();
+}
+
+/** True when `tag` matches a `PREDEFINED_TAGS` entry case-insensitively. */
+export function isPredefinedTag(tag: string): boolean {
+  return PREDEFINED_TAGS.some((predefined) => sameTag(predefined, tag));
+}
+
+/**
+ * Normalizes each entry, drops blanks, and removes case-insensitive
+ * duplicates, preserving first-seen order and casing.
+ */
+export function dedupeTags(tags: string[]): string[] {
+  const seen = new Set<string>();
+  const result: string[] = [];
+
+  for (const raw of tags) {
+    const tag = normalizeTag(raw);
+    const key = tag.toLowerCase();
+
+    if (!tag || seen.has(key)) {
+      continue;
+    }
+
+    seen.add(key);
+    result.push(tag);
+  }
+
+  return result;
+}

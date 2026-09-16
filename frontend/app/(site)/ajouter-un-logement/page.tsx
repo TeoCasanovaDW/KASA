@@ -6,6 +6,7 @@ import Container from "@/components/layout/Container";
 import PropertyForm from "@/components/property/PropertyForm";
 import { createPropertyAction } from "@/lib/property-actions";
 import { getSessionUser } from "@/lib/session";
+import { getUserTags } from "@/lib/tags-api";
 import { getUserById } from "@/lib/users-api";
 
 export const metadata: Metadata = {
@@ -70,6 +71,16 @@ export default async function AjouterUnLogementPage() {
     hostPicture = null;
   }
 
+  // Same swallow-everything approach: a failed tags request must never cost
+  // the owner the form, it just falls back to the predefined chips alone.
+  let reusableTags: string[] = [];
+
+  try {
+    reusableTags = await getUserTags(user.id);
+  } catch {
+    reusableTags = [];
+  }
+
   return (
     <Container className="mt-20 pt-6 pb-16">
       <BackLink />
@@ -80,6 +91,7 @@ export default async function AjouterUnLogementPage() {
           action={createPropertyAction}
           hostName={user.name}
           hostPicture={hostPicture}
+          reusableTags={reusableTags}
         />
       </div>
     </Container>

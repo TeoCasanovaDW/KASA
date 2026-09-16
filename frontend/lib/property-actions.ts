@@ -8,8 +8,8 @@ import { PROPERTIES_TAG } from "./properties";
 import { createProperty, uploadImage } from "./properties-api";
 import {
   composeLocation,
+  dedupeTags,
   filterEquipments,
-  normalizeTag,
   parsePrice,
   validateImageFile,
   validatePropertyForm,
@@ -36,22 +36,7 @@ function readEquipments(formData: FormData): string[] {
  * selector's own duplicate check.
  */
 function readTags(formData: FormData): string[] {
-  const seen = new Set<string>();
-  const tags: string[] = [];
-
-  for (const entry of readStrings(formData, "tags")) {
-    const tag = normalizeTag(entry);
-    const key = tag.toLowerCase();
-
-    if (!tag || seen.has(key)) {
-      continue;
-    }
-
-    seen.add(key);
-    tags.push(tag);
-  }
-
-  return tags;
+  return dedupeTags(readStrings(formData, "tags"));
 }
 
 /**

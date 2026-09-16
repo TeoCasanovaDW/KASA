@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
   composeLocation,
+  dedupeTags,
   filterEquipments,
+  isPredefinedTag,
   normalizeTag,
   parsePrice,
   validateImageFile,
@@ -168,5 +170,30 @@ describe("parsePrice", () => {
 describe("normalizeTag", () => {
   it("trims whitespace", () => {
     expect(normalizeTag("  Nature  ")).toBe("Nature");
+  });
+});
+
+describe("isPredefinedTag", () => {
+  it("matches a predefined tag case-insensitively", () => {
+    expect(isPredefinedTag("parc")).toBe(true);
+    expect(isPredefinedTag("PARC")).toBe(true);
+  });
+
+  it("returns false for a tag outside the predefined list", () => {
+    expect(isPredefinedTag("Spa")).toBe(false);
+  });
+});
+
+describe("dedupeTags", () => {
+  it("keeps the first casing of a case-insensitive duplicate", () => {
+    expect(dedupeTags(["Spa", "SPA", "spa"])).toEqual(["Spa"]);
+  });
+
+  it("drops blanks", () => {
+    expect(dedupeTags(["Spa", "  ", "", "Nature"])).toEqual(["Spa", "Nature"]);
+  });
+
+  it("preserves first-seen order", () => {
+    expect(dedupeTags(["Nature", "Spa", "nature"])).toEqual(["Nature", "Spa"]);
   });
 });

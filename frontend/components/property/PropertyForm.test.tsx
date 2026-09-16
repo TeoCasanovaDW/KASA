@@ -29,12 +29,25 @@ beforeEach(() => {
   });
 });
 
-function renderForm(action: ActionStub) {
+function renderForm(action: ActionStub, reusableTags?: string[]) {
   const container = render(
-    <PropertyForm action={action} hostName="Marie Curie" hostPicture={null} />,
+    <PropertyForm
+      action={action}
+      hostName="Marie Curie"
+      hostPicture={null}
+      reusableTags={reusableTags}
+    />,
   ).container;
 
   return { container };
+}
+
+// The chip row is the only `.flex.flex-wrap.gap-2` in the form, so its
+// buttons, in DOM order, are exactly the chip list in render order.
+function chipLabels(container: HTMLElement) {
+  return Array.from(
+    container.querySelectorAll<HTMLButtonElement>(".flex.flex-wrap.gap-2 button"),
+  ).map((button) => button.textContent);
 }
 
 function stubAction(result: FormState = {}) {
@@ -127,34 +140,55 @@ describe("PropertyForm", () => {
     expect(screen.getByLabelText("Prix par nuit (€)")).toHaveValue(95);
   });
 
-  it("adds a hidden tags input for a toggled chip and a custom tag, without duplicating", async () => {
+  it("renders reusable tags after the predefined chips, unpressed, and selects them on click", async () => {
     const user = userEvent.setup();
-    const { container } = renderForm(stubAction());
+    const { container } = renderForm(stubAction(), ["Spa"]);
     const hiddenTags = () =>
       Array.from(
         container.querySelectorAll<HTMLInputElement>('input[name="tags"]'),
       ).map((input) => input.value);
 
-    await user.click(screen.getByRole("button", { name: "Parc" }));
-    await user.type(
-      screen.getByLabelText("Ajouter une catégorie personnalisée"),
-      "Spa",
-    );
-    await user.click(screen.getByRole("button", { name: "+Ajouter un tag" }));
+    const labels = chipLabels(container);
+    expect(labels[labels.length - 1]).toBe("Spa");
 
-    expect(hiddenTags()).toEqual(["Parc", "Spa"]);
+    const spaChip = screen.getByRole("button", { name: "Spa" });
+    expect(spaChip).toHaveAttribute("aria-pressed", "false");
 
-    // Same custom tag again, case-insensitive: no second chip.
-    await user.type(
-      screen.getByLabelText("Ajouter une catégorie personnalisée"),
-      "spa",
-    );
-    await user.click(screen.getByRole("button", { name: "+Ajouter un tag" }));
+    await user.click(spaChip);
 
-    expect(hiddenTags()).toEqual(["Parc", "Spa"]);
+    expect(spaChip).toHaveAttribute("aria-pressed", "true");
+    expect(hiddenTags()).toEqual(["Spa"]);
   });
 
-  it("shows a custom tag as a pressed chip that toggles back off", async () => {
+  it("renders a reusable tag equal to a predefined tag, in any casing, once", () => {
+    renderForm(stubAction(), ["parc"]);
+
+    expect(screen.getAllByRole("button", { name: "Parc" })).toHaveLength(1);
+  });
+
+  it("adds a new custom tag as a pressed chip at the end of the list, with its hidden input", async () => {
+    const user = userEvent.setup();
+    const { container } = renderForm(stubAction(), ["Spa"]);
+    const hiddenTags = () =>
+      Array.from(
+        container.querySelectorAll<HTMLInputElement>('input[name="tags"]'),
+      ).map((input) => input.value);
+
+    await user.type(
+      screen.getByLabelText("Ajouter une catégorie personnalisée"),
+      "Studio",
+    );
+    await user.click(screen.getByRole("button", { name: "+Ajouter un tag" }));
+
+    const labels = chipLabels(container);
+    expect(labels[labels.length - 1]).toBe("Studio");
+
+    const chip = screen.getByRole("button", { name: "Studio" });
+    expect(chip).toHaveAttribute("aria-pressed", "true");
+    expect(hiddenTags()).toEqual(["Studio"]);
+  });
+
+  it("deselecting a custom chip removes its hidden input but keeps the chip, unpressed", async () => {
     const user = userEvent.setup();
     const { container } = renderForm(stubAction());
     const hiddenTags = () =>
@@ -168,15 +202,53 @@ describe("PropertyForm", () => {
     );
     await user.click(screen.getByRole("button", { name: "+Ajouter un tag" }));
 
-    // The regression: the tag reached the hidden inputs but had no chip, so
-    // adding one looked like nothing happened and it could never be removed.
     const chip = screen.getByRole("button", { name: "Spa" });
     expect(chip).toHaveAttribute("aria-pressed", "true");
+    expect(hiddenTags()).toEqual(["Spa"]);
 
     await user.click(chip);
 
-    expect(screen.queryByRole("button", { name: "Spa" })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Spa" })).toHaveAttribute(
+      "aria-pressed",
+      "false",
+    );
     expect(hiddenTags()).toEqual([]);
+  });
+
+  it("re-adding an existing tag with different casing creates no second chip and no second hidden input", async () => {
+    const user = userEvent.setup();
+    const { container } = renderForm(stubAction());
+    const hiddenTags = () =>
+      Array.from(
+        container.querySelectorAll<HTMLInputElement>('input[name="tags"]'),
+      ).map((input) => input.value);
+    const draft = () =>
+      screen.getByLabelText("Ajouter une catégorie personnalisée");
+    const addButton = () =>
+      screen.getByRole("button", { name: "+Ajouter un tag" });
+
+    await user.type(draft(), "Spa");
+    await user.click(addButton());
+
+    expect(hiddenTags()).toEqual(["Spa"]);
+
+    await user.type(draft(), "spa");
+    await user.click(addButton());
+
+    expect(screen.getAllByRole("button", { name: "Spa" })).toHaveLength(1);
+    expect(hiddenTags()).toEqual(["Spa"]);
+  });
+
+  it("renders the predefined chips and works with no reusableTags prop", async () => {
+    const user = userEvent.setup();
+    renderForm(stubAction());
+
+    const parcChip = screen.getByRole("button", { name: "Parc" });
+    expect(parcChip).toBeInTheDocument();
+
+    await user.click(parcChip);
+
+    expect(parcChip).toHaveAttribute("aria-pressed", "true");
   });
 
   it("adds a custom tag on Enter, ignores blanks, and does not submit the form", async () => {

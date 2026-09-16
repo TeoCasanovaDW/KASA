@@ -3,15 +3,7 @@
 // No server-only imports: stays renderable under Vitest.
 import { useState } from "react";
 import PlusIcon from "@/components/icons/PlusIcon";
-import { PREDEFINED_TAGS, normalizeTag } from "@/lib/property-form";
-
-function sameTag(a: string, b: string) {
-  return a.toLowerCase() === b.toLowerCase();
-}
-
-function isPredefined(tag: string) {
-  return PREDEFINED_TAGS.some((predefined) => sameTag(predefined, tag));
-}
+import { PREDEFINED_TAGS, dedupeTags, normalizeTag, sameTag } from "@/lib/property-form";
 
 function chipClassName(pressed: boolean) {
   return pressed
@@ -20,17 +12,20 @@ function chipClassName(pressed: boolean) {
 }
 
 /**
- * Predefined chips plus custom tag creation. Selected tags render as hidden
- * `name="tags"` inputs so the action reads them with `formData.getAll("tags")`.
+ * One chip list: predefined tags, then the owner's reusable tags, then tags
+ * added in this session. Selected tags render as hidden `name="tags"` inputs
+ * so the action reads them with `formData.getAll("tags")`.
  */
-export default function TagSelector() {
+export default function TagSelector({
+  reusableTags = [],
+}: {
+  reusableTags?: string[];
+}) {
   const [selected, setSelected] = useState<string[]>([]);
+  const [sessionTags, setSessionTags] = useState<string[]>([]);
   const [draft, setDraft] = useState("");
 
-  // Chips for everything the predefined row does not already show, in the
-  // order it was added: without this a custom tag is only a hidden input, so
-  // adding one looks like nothing happened and it can never be removed.
-  const customTags = selected.filter((tag) => !isPredefined(tag));
+  const chips = dedupeTags([...PREDEFINED_TAGS, ...reusableTags, ...sessionTags]);
 
   function toggleTag(tag: string) {
     setSelected((prev) =>
@@ -47,9 +42,19 @@ export default function TagSelector() {
       return;
     }
 
-    setSelected((prev) =>
-      prev.some((selectedTag) => sameTag(selectedTag, tag)) ? prev : [...prev, tag]
-    );
+    const existing = chips.find((chip) => sameTag(chip, tag));
+
+    if (existing) {
+      setSelected((prev) =>
+        prev.some((selectedTag) => sameTag(selectedTag, existing))
+          ? prev
+          : [...prev, existing]
+      );
+    } else {
+      setSessionTags((prev) => [...prev, tag]);
+      setSelected((prev) => [...prev, tag]);
+    }
+
     setDraft("");
   }
 
@@ -67,7 +72,7 @@ export default function TagSelector() {
       <p className="block text-sm font-semibold text-kasa-black">Catégories</p>
 
       <div className="mt-1.5 flex flex-wrap gap-2">
-        {PREDEFINED_TAGS.map((tag) => {
+        {chips.map((tag) => {
           const pressed = selected.some((selectedTag) => sameTag(selectedTag, tag));
 
           return (
@@ -113,22 +118,6 @@ export default function TagSelector() {
           </button>
         </div>
       </div>
-
-      {customTags.length > 0 && (
-        <div className="mt-3 flex flex-wrap gap-2">
-          {customTags.map((tag) => (
-            <button
-              key={tag}
-              type="button"
-              aria-pressed
-              onClick={() => toggleTag(tag)}
-              className={chipClassName(true)}
-            >
-              {tag}
-            </button>
-          ))}
-        </div>
-      )}
 
       {selected.map((tag) => (
         <input key={tag} type="hidden" name="tags" value={tag} />
