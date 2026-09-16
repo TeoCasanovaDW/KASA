@@ -1,5 +1,7 @@
 # Kasa
 
+[![CI](https://github.com/TeoCasanovaDW/KASA/actions/workflows/ci.yml/badge.svg)](https://github.com/TeoCasanovaDW/KASA/actions/workflows/ci.yml)
+
 Plateforme de location de logements. Ce dépôt contient deux projets :
 
 - `frontend/` — application Next.js (App Router, TypeScript, Tailwind CSS) ;
@@ -80,6 +82,10 @@ Le projet est découpé en deux services indépendants : le frontend Next.js con
 - Les écritures (connexion, inscription, envoi de message, création de logement) passent par des Server Actions, qui appellent l'API côté serveur puis invalident le cache Next.js concerné (`revalidatePath`/`updateTag`).
 - Les favoris ont deux modes : connecté, ils sont rattachés au compte et passent par l'API (`favorites-api.ts` et la Server Action `favorites-actions.ts`, sur `POST`/`DELETE /api/properties/:id/favorite` et `GET /api/users/:id/favorites`) ; déconnecté, ils restent dans le navigateur via `favorites-storage.ts` et `localStorage`. Aucun chemin connecté ne lit ni n'écrit le `localStorage`, et les deux listes ne sont jamais fusionnées.
 - Aucune requête du navigateur n'atteint directement l'API Express : toute lecture ou écriture passe par le serveur Next.js, qui est aussi ce qui rend le CORS inutile côté backend.
+
+## Intégration continue
+
+GitHub Actions ([`.github/workflows/ci.yml`](./.github/workflows/ci.yml)) s'exécute à chaque push sur `main` et sur chaque pull request. Pour le frontend : installation, lint, tests Vitest, build de production (qui inclut la vérification TypeScript) et build Storybook. Pour le backend : installation propre des dépendances. La CI ne déploie rien : Netlify et Railway buildent eux-mêmes depuis le dépôt.
 
 ## Déploiement
 

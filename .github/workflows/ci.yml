@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  frontend:
+    name: Frontend
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm test
+
+      # `next build` also type-checks the whole project, tests and stories
+      # included, after generating the route types a bare `tsc` would lack.
+      # The sitemap is prerendered from the API: with no backend reachable it
+      # falls back to static entries, so a local placeholder URL is enough.
+      - name: Build
+        run: npm run build
+        env:
+          KASA_API_URL: http://localhost:4000
+
+      - name: Build Storybook
+        run: npm run build-storybook
+
+  backend:
+    name: Backend
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      # The backend has no test or lint scripts. A clean install still catches
+      # lockfile drift and native build failures (sqlite3) before Railway does.
+      - name: Install dependencies
+        run: npm ci
