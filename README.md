@@ -3,7 +3,7 @@
 Plateforme de location de logements. Ce dépôt contient deux projets :
 
 - `frontend/` — application Next.js (App Router, TypeScript, Tailwind CSS) ;
-- `backend/` — API Express 5 + SQLite fournie, consommée telle quelle.
+- `backend/` — API Express 5 + SQLite fournie à l'origine, depuis modifiée par quelques exceptions ciblées et documentées (voir `backend/README.md`, section « Modifications apportées au backend fourni »).
 
 ## Prérequis
 

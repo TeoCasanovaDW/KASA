@@ -237,6 +237,20 @@
         }
       }
     },
+    "/api/users/{id}/tags": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "List reusable custom tags from a user's own properties (self or admin)",
+        "security": [ { "BearerAuth": [] } ],
+        "parameters": [ { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } } ],
+        "responses": {
+          "200": { "description": "Array of distinct tag names", "content": { "application/json": { "schema": { "type": "array", "items": { "type": "string" } } } } },
+          "401": { "description": "Authentication required", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+          "403": { "description": "Forbidden (self or admin only)", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+          "404": { "description": "User not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
+      }
+    },
 
     "/api/properties/{id}/ratings": {
       "get": {

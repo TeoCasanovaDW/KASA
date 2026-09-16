@@ -4,6 +4,7 @@ const {
   createProperty,
   updateProperty,
   deleteProperty,
+  listTagsForOwner,
 } = require('../services/propertiesService');
 
 function statusFromError(e) {
@@ -69,10 +70,21 @@ async function remove(req, res) {
   }
 }
 
+async function listTagsForUser(req, res) {
+  const db = req.app.locals.db;
+  try {
+    const tags = await listTagsForOwner(db, req.params.id);
+    res.json(tags);
+  } catch (e) {
+    res.status(statusFromError(e)).json({ error: e.message });
+  }
+}
+
 module.exports = {
   list,
   getById,
   create,
   update,
   remove,
+  listTagsForUser,
 };

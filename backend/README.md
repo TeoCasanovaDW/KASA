@@ -27,6 +27,15 @@ Ce projet fournit une API HTTP permettant de :
 
 Le serveur est écrit avec Express 5 et persiste les données dans un fichier SQLite. Les routes sont sécurisées par des middlewares d’authentification/autorisation basés sur JWT.
 
+### Modifications apportées au backend fourni
+Ce backend a été fourni à l’origine, puis modifié par quelques changements additifs et ciblés :
+- Port d’écoute par défaut passé à 4000 (`bin/www`).
+- Chemins de stockage configurables via `KASA_DB_PATH` et `KASA_UPLOAD_DIR` (`db.js`), pour un hébergement persistant.
+- `POST /api/uploads/image` autorisé à tout utilisateur authentifié pour `purpose=user-picture` (au lieu de owner/admin uniquement), pour qu’un compte client puisse changer son propre avatar.
+- Ajout de `GET /api/users/:id/tags` : tags réutilisables des propriétés d’un utilisateur (self ou admin).
+
+Aucun endpoint existant n’a été retiré ni son comportement modifié en dehors de ces points.
+
 ## Prérequis
 - Node.js 18+ (recommandé)
 - npm
@@ -84,6 +93,7 @@ Base: /api
 - GET /api/users/:id: détail (self ou admin)
 - POST /api/users: création (admin)
 - PATCH /api/users/:id: mise à jour (self ou admin; seul admin peut définir role=admin)
+- GET /api/users/:id/tags: tags réutilisables des propriétés de l’utilisateur (self ou admin)
 
 - GET /api/properties/:id/ratings: lister les notes d’une propriété
 - POST /api/properties/:id/ratings: ajouter une note

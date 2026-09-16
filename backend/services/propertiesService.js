@@ -184,6 +184,26 @@ async function getPropertyOwnerId(db, id) {
   return row ? row.host_id : null;
 }
 
+async function listTagsForOwner(db, userId) {
+  const user = await db.getAsync('SELECT id FROM users WHERE id = ?', [userId]);
+  if (!user) { const err = new Error('User not found'); err.status = 404; throw err; }
+  const rows = await db.allAsync(`
+    SELECT t.name FROM property_tags t
+    JOIN properties p ON p.id = t.property_id
+    WHERE p.host_id = ?
+    ORDER BY t.name COLLATE NOCASE
+  `, [userId]);
+  const seen = new Set();
+  const tags = [];
+  for (const row of rows) {
+    const key = row.name.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    tags.push(row.name);
+  }
+  return tags;
+}
+
 module.exports = {
   listProperties,
   getPropertyDetails,
@@ -191,4 +211,5 @@ module.exports = {
   updateProperty,
   deleteProperty,
   getPropertyOwnerId,
+  listTagsForOwner,
 };
