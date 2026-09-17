@@ -33,7 +33,7 @@ export default async function MessageriePage() {
 
   return (
     <>
-      <div className="flex w-full flex-col border-kasa-gray-light lg:w-[376px] lg:flex-none lg:border-r">
+      <div className="flex min-h-0 w-full flex-col border-kasa-gray-light lg:w-[376px] lg:flex-none lg:border-r">
         {loadFailed ? (
           <p className="p-6 text-sm text-kasa-gray-dark">
             La messagerie est indisponible. Réessayez plus tard.

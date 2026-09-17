@@ -100,9 +100,9 @@ function EquipmentsField() {
   return (
     <fieldset>
       <legend className="text-sm font-semibold text-kasa-black">Équipements</legend>
-      <div className="mt-1.5 grid grid-cols-2 gap-x-4 gap-y-2 text-sm sm:grid-cols-3">
+      <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-4 text-sm">
         {EQUIPMENTS.map((equipment) => (
-          <label key={equipment} className="flex items-center gap-2">
+          <label key={equipment} className="flex items-center gap-2.5 pl-2.5">
             <input
               type="checkbox"
               name="equipments"
@@ -184,9 +184,12 @@ export default function PropertyForm({
         </p>
       )}
 
+      {/* Two columns on desktop; on mobile the column wrappers dissolve
+          (`contents`) so the cards follow the mockup order: details, images,
+          host, equipments, tags. */}
       <div className="grid gap-8 md:grid-cols-2">
-        <div className="flex flex-col gap-8">
-          <div className="flex flex-col gap-5 rounded-2xl bg-kasa-white p-6 shadow-sm md:p-10">
+        <div className="contents md:flex md:flex-col md:gap-8">
+          <div className="order-1 flex flex-col gap-5 rounded-2xl bg-kasa-white p-6 shadow-sm md:order-none md:p-10">
             <TextField
               id="title"
               name="title"
@@ -228,13 +231,13 @@ export default function PropertyForm({
             />
           </div>
 
-          <div className="rounded-2xl bg-kasa-white p-6 shadow-sm md:p-10">
+          <div className="order-4 rounded-2xl bg-kasa-white p-6 shadow-sm md:order-none md:p-10">
             <EquipmentsField />
           </div>
         </div>
 
-        <div className="flex flex-col gap-8">
-          <div className="flex flex-col gap-5 rounded-2xl bg-kasa-white p-6 shadow-sm md:p-10">
+        <div className="contents md:flex md:flex-col md:gap-8">
+          <div className="order-2 flex flex-col gap-5 rounded-2xl bg-kasa-white p-6 shadow-sm md:order-none md:p-10">
             <div>
               <ImageInput
                 id="cover"
@@ -256,9 +259,11 @@ export default function PropertyForm({
             </div>
           </div>
 
-          <HostCard hostName={hostName} hostPicture={hostPicture} />
+          <div className="order-3 md:order-none">
+            <HostCard hostName={hostName} hostPicture={hostPicture} />
+          </div>
 
-          <div className="rounded-2xl bg-kasa-white p-6 shadow-sm md:p-10">
+          <div className="order-5 rounded-2xl bg-kasa-white p-6 shadow-sm md:order-none md:p-10">
             <TagSelector reusableTags={reusableTags} />
           </div>
         </div>

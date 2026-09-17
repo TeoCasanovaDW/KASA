@@ -109,7 +109,7 @@ export default async function PropertyPage({
 
   if (loadFailed) {
     return (
-      <Container className="mt-20 pt-6 pb-16">
+      <Container className="w-full pt-6 pb-16">
         <BackLink />
         <p className="mt-10 text-center text-kasa-gray-dark">
           Ce logement n&apos;a pas pu être chargé. Réessayez plus tard.
@@ -128,7 +128,7 @@ export default async function PropertyPage({
   const sessionUser = await getSessionUser();
 
   return (
-    <Container className="mt-20 pt-6 pb-16">
+    <Container className="w-full pt-6 pb-16">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

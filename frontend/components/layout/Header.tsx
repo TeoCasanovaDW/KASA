@@ -6,8 +6,8 @@ import MobileNav from "@/components/layout/MobileNav";
 
 export default function Header() {
   return (
-    <header>
-      <Container className="pt-4 md:pt-10">
+    <header className="sticky top-0 z-40 bg-kasa-white md:static md:bg-transparent">
+      <Container className="md:pt-10">
         <nav
           aria-label="Navigation principale"
           className="mx-auto hidden w-full max-w-3xl items-center justify-between rounded-lg bg-kasa-white px-8 py-3 md:flex"
@@ -40,13 +40,16 @@ export default function Header() {
               </Link>
             </div>
 
-            <HeaderAuth variant="desktop" />
+            <HeaderAuth />
           </div>
         </nav>
 
         <div className="flex items-center justify-between py-4 md:hidden">
           <Logo variant="icon" />
-          <MobileNav authSlot={<HeaderAuth variant="mobile" />} />
+          <div className="flex items-center gap-4">
+            <HeaderAuth />
+            <MobileNav />
+          </div>
         </div>
       </Container>
     </header>

@@ -10,15 +10,11 @@ import { getUserById } from "@/lib/users-api";
  * into dynamic rendering. Accepted: the property fetches keep their own
  * `revalidate` data cache, so the API is still hit at most once a minute.
  */
-export default async function HeaderAuth({
-  variant,
-}: {
-  variant: "desktop" | "mobile";
-}) {
+export default async function HeaderAuth() {
   const user = await getSessionUser();
 
-  // Icon only in the desktop nav, where it sits with the favorites and
-  // messaging icons; the mobile panel is a list of labels, so it keeps one.
+  // Icon only: on desktop it sits with the favorites and messaging icons, on
+  // mobile next to the burger.
   if (!user) {
     return (
       <Link
@@ -27,7 +23,6 @@ export default async function HeaderAuth({
         className="flex items-center gap-3"
       >
         <UserIcon className="h-5 w-5 text-kasa-red" />
-        {variant === "mobile" && <span aria-hidden="true">Se connecter</span>}
       </Link>
     );
   }
@@ -51,7 +46,6 @@ export default async function HeaderAuth({
       name={firstName}
       picture={picture}
       logoutAction={logoutAction}
-      showName={variant === "mobile"}
       showListings={user.role === "owner" || user.role === "admin"}
     />
   );

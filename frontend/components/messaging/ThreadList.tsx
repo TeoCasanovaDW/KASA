@@ -32,7 +32,7 @@ export default function ThreadList({
           Aucune conversation pour le moment. Consultez un logement pour contacter un hôte.
         </p>
       ) : (
-        <ul className="mt-4 divide-y divide-kasa-gray-light px-2 lg:min-h-0 lg:overflow-y-auto">
+        <ul className="mt-4 divide-y divide-kasa-gray-light px-2 min-h-0 overflow-y-auto">
           {threads.map((thread) => (
             <li key={thread.user.id}>
               <Link

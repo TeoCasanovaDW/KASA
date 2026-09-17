@@ -24,8 +24,8 @@ const user: SessionUser = {
 
 const TRIGGER_NAME = "Marie, ouvrir le menu du compte";
 
-async function renderAuth(variant: "desktop" | "mobile" = "desktop") {
-  render(await HeaderAuth({ variant }));
+async function renderAuth() {
+  render(await HeaderAuth());
 }
 
 beforeEach(() => {
@@ -45,16 +45,10 @@ describe("HeaderAuth, logged out", () => {
     expect(link.querySelector("svg")).toBeInTheDocument();
   });
 
-  it("carries no visible label in the desktop nav", async () => {
+  it("carries no visible label", async () => {
     await renderAuth();
 
     expect(screen.getByRole("link")).toHaveTextContent("");
-  });
-
-  it("keeps the label in the mobile panel's list", async () => {
-    await renderAuth("mobile");
-
-    expect(screen.getByRole("link")).toHaveTextContent("Se connecter");
   });
 });
 

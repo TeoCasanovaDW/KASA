@@ -152,7 +152,7 @@ export default async function ThreadPage({
         )}
       </div>
 
-      <div className="flex w-full flex-col lg:flex-1">
+      <div className="flex min-h-0 w-full flex-col lg:flex-1">
         {threadFailed || !thread ? (
           <p className="p-6 text-sm text-kasa-gray-dark">{UNAVAILABLE}</p>
         ) : (

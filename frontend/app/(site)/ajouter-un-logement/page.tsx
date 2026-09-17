@@ -42,7 +42,7 @@ export default async function AjouterUnLogementPage() {
 
   if (user.role !== "owner" && user.role !== "admin") {
     return (
-      <Container className="mt-20 pt-6 pb-16">
+      <Container className="pt-6 pb-16">
         <BackLink />
         <h1 className="mt-6 text-3xl font-bold text-kasa-black">
           Ajouter une propriété
@@ -82,7 +82,7 @@ export default async function AjouterUnLogementPage() {
   }
 
   return (
-    <Container className="mt-20 pt-6 pb-16">
+    <Container className="pt-6 pb-16">
       <BackLink />
       {/* No <h1> and no submit button here: PropertyForm owns that header row,
           because the button needs the form's `pending` state. */}

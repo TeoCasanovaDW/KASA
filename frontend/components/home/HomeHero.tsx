@@ -4,8 +4,8 @@ import homeHero from "@/public/images/home-hero.png";
 export default function HomeHero() {
   return (
     <div>
-      <h1 className="text-center text-2xl font-bold text-kasa-red md:text-[32px]">
-        Chez vous, partout et ailleurs
+      <h1 className="text-center text-4xl font-bold text-kasa-red">
+        Chez vous,<br className="md:hidden" /> partout et ailleurs
       </h1>
       <p className="mt-4 text-center">
         Avec Kasa, vivez des séjours uniques dans des hébergements chaleureux,

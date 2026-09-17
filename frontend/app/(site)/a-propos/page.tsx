@@ -11,8 +11,8 @@ export const metadata: Metadata = {
 
 export default function AProposPage() {
   return (
-    <Container className="pt-10 pb-2">
-      <h1 className="text-center text-2xl font-bold text-kasa-red md:text-[32px]">
+    <Container className="pt-10 pb-28 md:pb-10">
+      <h1 className="text-center text-4xl font-bold text-kasa-red">
         À propos
       </h1>
 
@@ -29,15 +29,17 @@ export default function AProposPage() {
       <Image
         src={about01}
         alt="Maison en bois entourée d'arbres"
-        className="mt-11 h-auto w-full rounded-xl object-cover"
+        className="mx-auto mt-11 aspect-[3/4] h-auto w-[calc(100%-1rem)] rounded-2xl object-cover md:aspect-auto md:w-full"
       />
 
-      <div className="mt-10 grid gap-6 md:grid-cols-2 md:items-center md:gap-8">
-        <div>
-          <h2 className="font-bold text-kasa-red">
+      {/* Mobile stacks list, image, closing text; desktop puts the image in
+          its own column beside the list and the closing text. */}
+      <div className="mt-12 grid gap-4 md:mt-10 md:grid-cols-2 md:items-center md:gap-x-8 md:gap-y-6">
+        <div className="md:col-start-1 md:row-start-1 md:self-end">
+          <h2 className="text-lg font-bold text-kasa-red">
             Notre mission est simple :
           </h2>
-          <ol className="mt-4 flex flex-col gap-3">
+          <ol className="mt-4 flex flex-col gap-5">
             <li>1. Offrir une plateforme fiable et simple d&apos;utilisation</li>
             <li>2. Proposer des hébergements variés et de qualité</li>
             <li>
@@ -45,18 +47,19 @@ export default function AProposPage() {
               voyageurs
             </li>
           </ol>
-          <p className="mt-6 font-semibold text-kasa-red">
-            Que vous cherchiez un appartement cosy en centre-ville, une maison
-            en bord de mer ou un chalet à la montagne, Kasa vous accompagne
-            pour que chaque séjour devienne un souvenir inoubliable.
-          </p>
         </div>
 
         <Image
           src={about02}
           alt="Chalet en bois avec une grande baie vitrée"
-          className="h-auto w-full rounded-xl object-cover"
+          className="aspect-[4/5] h-auto w-full rounded-2xl object-cover md:col-start-2 md:row-span-2 md:row-start-1 md:aspect-auto"
         />
+
+        <p className="text-lg font-medium text-kasa-red md:col-start-1 md:row-start-2 md:self-start">
+          Que vous cherchiez un appartement cosy en centre-ville, une maison en
+          bord de mer ou un chalet à la montagne, Kasa vous accompagne pour que
+          chaque séjour devienne un souvenir inoubliable.
+        </p>
       </div>
     </Container>
   );

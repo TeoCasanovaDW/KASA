@@ -39,7 +39,7 @@ export default function MessageComposer({
   return (
     <form
       action={formAction}
-      className="flex-none border-t border-kasa-gray-light bg-kasa-white p-6"
+      className="flex-none border-t border-kasa-gray-light bg-kasa-white px-6 py-5"
     >
       <input type="hidden" name="recipientId" value={recipientId} />
       {propertyId && (
@@ -50,22 +50,25 @@ export default function MessageComposer({
         Votre message
       </label>
 
-      <div className="relative rounded-xl border border-kasa-gray-light">
+      {/* One line tall like the mockup, the button's height. Where
+          `field-sizing` is supported the field grows with a long message up
+          to max-h-32; elsewhere it stays one line and scrolls. */}
+      <div className="flex items-end gap-2 rounded-xl border border-kasa-gray-light p-1.5 pl-4 focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-kasa-red">
         <textarea
           id="message-body"
           name="body"
-          rows={3}
+          rows={1}
           placeholder="Envoyer un message"
           value={value}
           onChange={(event) => setValue(event.target.value)}
-          className="w-full resize-none rounded-xl bg-kasa-white p-4 pr-16 text-sm outline-none"
+          className="field-sizing-content max-h-32 min-h-8 min-w-0 flex-1 resize-none bg-kasa-white py-1.5 text-sm leading-5 outline-none"
         />
 
         <button
           type="submit"
           aria-label="Envoyer"
           disabled={pending || isEmpty}
-          className="absolute right-3 bottom-3 flex h-9 w-9 items-center justify-center rounded-md bg-kasa-red text-kasa-white disabled:opacity-50"
+          className="flex h-8 w-8 flex-none items-center justify-center rounded-md bg-kasa-red text-kasa-white disabled:opacity-50"
         >
           <ArrowUpIcon />
         </button>

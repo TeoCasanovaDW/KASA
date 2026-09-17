@@ -22,7 +22,7 @@ export default function AuthCard({
       <div className="mx-auto w-full max-w-[960px] rounded-lg border border-kasa-gray-light bg-kasa-white px-4 py-10 md:px-28 md:py-20">
         {/* Heading and subtitle run wider than the form column in both mockups. */}
         <div className="mx-auto max-w-lg">
-          <h1 className="text-center text-2xl font-bold text-kasa-red md:text-[32px]">
+          <h1 className="text-center text-[26px] leading-tight font-bold text-kasa-red md:text-[32px]">
             {title}
           </h1>
           <p className="mt-4 text-center text-sm text-kasa-black">{subtitle}</p>

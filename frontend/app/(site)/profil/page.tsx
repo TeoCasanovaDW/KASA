@@ -90,7 +90,7 @@ export default async function ProfilPage() {
   // The page wrapper is wider than Container, like the grid wrappers on
   // /favoris and /mes-annonces, so the cards reach the same width there.
   return (
-    <div className="mx-auto mt-20 w-full max-w-[87.5rem] px-4 pt-6 pb-16 md:px-8">
+    <div className="mx-auto w-full max-w-[87.5rem] px-4 pt-6 pb-16 md:px-8">
       <BackLink />
       <h1 className="mt-6 text-3xl font-bold text-kasa-black">Mon profil</h1>
 

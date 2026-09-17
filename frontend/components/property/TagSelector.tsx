@@ -7,8 +7,8 @@ import { PREDEFINED_TAGS, dedupeTags, normalizeTag, sameTag } from "@/lib/proper
 
 function chipClassName(pressed: boolean) {
   return pressed
-    ? "rounded-full bg-kasa-red px-4 py-2 text-sm text-kasa-white"
-    : "rounded-full bg-kasa-gray-light px-4 py-2 text-sm text-kasa-black";
+    ? "rounded-md bg-kasa-red px-4 py-2 text-sm text-kasa-white"
+    : "rounded-md bg-kasa-gray-light px-4 py-2 text-sm text-kasa-black";
 }
 
 /**

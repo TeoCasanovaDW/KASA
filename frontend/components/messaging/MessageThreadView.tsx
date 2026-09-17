@@ -34,7 +34,7 @@ export default function MessageThreadView({
   const groups = groupMessagesByDay(thread.messages);
 
   return (
-    <div className="flex h-full flex-col bg-kasa-light-orange">
+    <div className="flex h-full min-h-0 flex-col bg-kasa-light-orange">
       <div className="flex-none border-b border-kasa-gray-light bg-kasa-white px-6 py-4 lg:px-10">
         <Link
           href="/messagerie"
@@ -44,7 +44,9 @@ export default function MessageThreadView({
           Retour
         </Link>
 
-        <div className="flex items-center gap-3">
+        {/* Mobile drops the partner header, as the mobile mockup does: each
+            bubble already names the sender. */}
+        <div className="hidden items-center gap-3 lg:flex">
           <Avatar src={thread.user.picture} size={36} />
           <p className="font-semibold text-kasa-black">{thread.user.name}</p>
         </div>
@@ -62,50 +64,54 @@ export default function MessageThreadView({
         )}
       </div>
 
-      {/* Desktop pads the thread column to the mockup's 40px and opens the
-          messages out to ~32px apart; an empty thread centres its placeholder
-          instead of parking it in the top-left corner. */}
-      <div
-        className={`flex-1 p-6 lg:min-h-0 lg:overflow-y-auto lg:p-10 ${
-          thread.messages.length === 0
-            ? "flex items-center justify-center"
-            : "space-y-6 lg:space-y-8"
-        }`}
-      >
-        {thread.messages.length === 0 ? (
-          <p className="text-sm text-kasa-gray-dark">
-            Aucun message. Écrivez le premier.
-          </p>
-        ) : (
-          groups.map((group, index) => (
-            <div key={group.day} className="space-y-6 lg:space-y-8">
-              {/* The first day carries no separator, matching the mockup. */}
-              {index > 0 && (
-                <div className="flex items-center gap-3">
-                  <hr className="flex-1 border-kasa-gray-light" />
-                  <span className="text-xs text-kasa-gray-dark">
-                    {group.day}
-                  </span>
-                  <hr className="flex-1 border-kasa-gray-light" />
-                </div>
-              )}
+      {/* Only the feed scrolls. `flex-col-reverse` makes it open scrolled to
+          the latest message with no client script; `mb-auto` keeps a short
+          thread at the top. Desktop pads the thread column to the mockup's
+          40px and opens the messages out to ~32px apart; an empty thread
+          centres its placeholder instead of parking it in the top-left corner. */}
+      <div className="flex min-h-0 flex-1 flex-col-reverse overflow-y-auto">
+        <div
+          className={`p-6 lg:p-10 ${
+            thread.messages.length === 0
+              ? "flex flex-1 items-center justify-center"
+              : "mb-auto space-y-6 lg:space-y-8"
+          }`}
+        >
+          {thread.messages.length === 0 ? (
+            <p className="text-sm text-kasa-gray-dark">
+              Aucun message. Écrivez le premier.
+            </p>
+          ) : (
+            groups.map((group, index) => (
+              <div key={group.day} className="space-y-6 lg:space-y-8">
+                {/* The first day carries no separator, matching the mockup. */}
+                {index > 0 && (
+                  <div className="flex items-center gap-3">
+                    <hr className="flex-1 border-kasa-gray-light" />
+                    <span className="text-xs text-kasa-gray-dark">
+                      {group.day}
+                    </span>
+                    <hr className="flex-1 border-kasa-gray-light" />
+                  </div>
+                )}
 
-              {group.messages.map((message) => {
-                const isOwn = message.sender_id === currentUserId;
+                {group.messages.map((message) => {
+                  const isOwn = message.sender_id === currentUserId;
 
-                return (
-                  <MessageBubble
-                    key={message.id}
-                    message={message}
-                    participantName={isOwn ? OWN_LABEL : thread.user.name}
-                    picture={isOwn ? currentUserPicture : thread.user.picture}
-                    isOwn={isOwn}
-                  />
-                );
-              })}
-            </div>
-          ))
-        )}
+                  return (
+                    <MessageBubble
+                      key={message.id}
+                      message={message}
+                      participantName={isOwn ? OWN_LABEL : thread.user.name}
+                      picture={isOwn ? currentUserPicture : thread.user.picture}
+                      isOwn={isOwn}
+                    />
+                  );
+                })}
+              </div>
+            ))
+          )}
+        </div>
       </div>
 
       <MessageComposer

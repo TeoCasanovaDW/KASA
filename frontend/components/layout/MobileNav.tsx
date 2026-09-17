@@ -6,11 +6,9 @@ import Logo from "@/components/layout/Logo";
 
 const FOCUSABLE_SELECTOR = "a[href], button:not([disabled])";
 
-export default function MobileNav({
-  authSlot,
-}: {
-  authSlot: React.ReactNode;
-}) {
+const LINK_CLASSES = "block py-7 text-2xl";
+
+export default function MobileNav() {
   const [open, setOpen] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
   const firstLinkRef = useRef<HTMLAnchorElement>(null);
@@ -71,46 +69,51 @@ export default function MobileNav({
       {open && (
         <div
           ref={panelRef}
-          className="fixed inset-0 z-50 flex flex-col bg-kasa-white p-6 md:hidden"
+          className="fixed inset-0 z-50 flex flex-col bg-kasa-white px-4 md:hidden"
         >
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between py-4">
             <Logo variant="icon" />
             <button type="button" aria-label="Fermer le menu" onClick={close}>
               <CloseIcon />
             </button>
           </div>
 
-          <nav
-            aria-label="Navigation mobile"
-            className="mt-10 flex flex-col gap-6 text-lg"
-          >
-            <Link ref={firstLinkRef} href="/" onClick={close}>
-              Accueil
-            </Link>
-            <Link href="/a-propos" onClick={close}>
-              À propos
-            </Link>
-            <Link href="/messagerie" onClick={close}>
-              Messagerie
-            </Link>
-            <Link href="/favoris" onClick={close}>
-              Favoris
-            </Link>
-            {/* Server-rendered auth state; the wrapper closes the panel on the
-                slot's navigations, which its content cannot reach from the
-                server. Narrowed to links: the account menu's own trigger must
-                not tear down the panel it opens into. */}
-            <div
-              onClick={(event) => {
-                if ((event.target as HTMLElement).closest("a")) close();
-              }}
-            >
-              {authSlot}
-            </div>
+          <nav aria-label="Navigation mobile">
+            <ul className="divide-y divide-kasa-gray-light">
+              <li>
+                <Link
+                  ref={firstLinkRef}
+                  href="/"
+                  onClick={close}
+                  className={LINK_CLASSES}
+                >
+                  Accueil
+                </Link>
+              </li>
+              <li>
+                <Link href="/a-propos" onClick={close} className={LINK_CLASSES}>
+                  À propos
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/messagerie"
+                  onClick={close}
+                  className={LINK_CLASSES}
+                >
+                  Messagerie
+                </Link>
+              </li>
+              <li>
+                <Link href="/favoris" onClick={close} className={LINK_CLASSES}>
+                  Favoris
+                </Link>
+              </li>
+            </ul>
             <Link
               href="/ajouter-un-logement"
               onClick={close}
-              className="rounded-full bg-kasa-red px-4 py-3 text-center text-kasa-white"
+              className="mt-3 inline-block w-50 rounded-lg bg-kasa-red py-2 text-center text-sm text-kasa-white"
             >
               Ajouter un logement
             </Link>
@@ -126,15 +129,14 @@ function HamburgerIcon() {
     <svg
       aria-hidden="true"
       focusable="false"
-      viewBox="0 0 24 24"
+      viewBox="0 0 28 20"
       fill="none"
       stroke="currentColor"
-      strokeWidth={2}
+      strokeWidth={3}
       strokeLinecap="round"
-      strokeLinejoin="round"
-      className="h-6 w-6 text-kasa-black"
+      className="h-5 w-7 text-kasa-gray-dark"
     >
-      <path d="M3 6h18M3 12h18M3 18h18" />
+      <path d="M8.5 1.5h18M1.5 10h25M14.5 18.5h12" />
     </svg>
   );
 }
@@ -144,15 +146,14 @@ function CloseIcon() {
     <svg
       aria-hidden="true"
       focusable="false"
-      viewBox="0 0 24 24"
+      viewBox="0 0 28 28"
       fill="none"
       stroke="currentColor"
-      strokeWidth={2}
+      strokeWidth={2.5}
       strokeLinecap="round"
-      strokeLinejoin="round"
-      className="h-6 w-6 text-kasa-black"
+      className="h-7 w-7 text-kasa-black"
     >
-      <path d="M18 6 6 18M6 6l12 12" />
+      <path d="M2 2l24 24M26 2 2 26" />
     </svg>
   );
 }
