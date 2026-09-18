@@ -3,12 +3,17 @@ import type { PropertyDetail } from "@/types/property";
 
 export default function PropertyInfo({
   property,
+  favoriteControl,
 }: {
   property: PropertyDetail;
+  favoriteControl?: React.ReactNode;
 }) {
   return (
     <div className="rounded-2xl bg-kasa-white p-6 shadow-sm md:p-8">
-      <h1 className="text-2xl font-bold">{property.title}</h1>
+      <div className="flex items-start justify-between gap-4">
+        <h1 className="text-2xl font-bold">{property.title}</h1>
+        {favoriteControl}
+      </div>
 
       {property.location && (
         <p className="mt-3 flex items-center gap-1 text-kasa-gray-dark">

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import ArrowLeftIcon from "@/components/icons/ArrowLeftIcon";
+import FavoriteButton from "@/components/favorites/FavoriteButton";
 import Container from "@/components/layout/Container";
 import HostCard from "@/components/property/HostCard";
 import PriceCard from "@/components/property/PriceCard";
@@ -151,7 +152,12 @@ export default async function PropertyPage({
             title={property.title}
           />
           <div className="mt-6">
-            <PropertyInfo property={property} />
+            <PropertyInfo
+              property={property}
+              favoriteControl={
+                <FavoriteButton propertyId={property.id} size="lg" />
+              }
+            />
           </div>
         </div>
 
