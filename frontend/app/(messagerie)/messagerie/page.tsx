@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import ThreadList from "@/components/messaging/ThreadList";
 import { ApiError } from "@/lib/api-client";
+import { authUrl } from "@/lib/auth-redirect";
 import { getThreads } from "@/lib/messages-api";
 import { getSessionUser } from "@/lib/session";
 import type { ThreadSummary } from "@/types/message";
@@ -15,7 +16,7 @@ export default async function MessageriePage() {
   const user = await getSessionUser();
 
   if (!user) {
-    redirect("/connexion");
+    redirect(authUrl("/connexion", "/messagerie"));
   }
 
   let threads: ThreadSummary[] = [];

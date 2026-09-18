@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import ProfileAvatarForm from "@/components/auth/ProfileAvatarForm";
 import ArrowLeftIcon from "@/components/icons/ArrowLeftIcon";
 import Avatar from "@/components/ui/Avatar";
+import { authUrl } from "@/lib/auth-redirect";
 import { updateAvatarAction } from "@/lib/user-actions";
 import { getSessionUser } from "@/lib/session";
 import { getUserById } from "@/lib/users-api";
@@ -68,7 +69,7 @@ export default async function ProfilPage() {
   const user = await getSessionUser();
 
   if (!user) {
-    redirect("/connexion");
+    redirect(authUrl("/connexion", "/profil"));
   }
 
   // Name, email and role come from the session, which always carries all

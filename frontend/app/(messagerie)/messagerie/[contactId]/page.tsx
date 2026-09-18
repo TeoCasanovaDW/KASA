@@ -4,6 +4,7 @@ import MarkThreadRead from "@/components/messaging/MarkThreadRead";
 import MessageThreadView from "@/components/messaging/MessageThreadView";
 import ThreadList from "@/components/messaging/ThreadList";
 import { ApiError } from "@/lib/api-client";
+import { authUrl } from "@/lib/auth-redirect";
 import { sendMessageAction } from "@/lib/messages-actions";
 import { getThread, getThreads } from "@/lib/messages-api";
 import { getPropertyById } from "@/lib/properties";
@@ -60,8 +61,11 @@ export default async function ThreadPage({
 
   const user = await getSessionUser();
 
+  // Back to the inbox, not this thread: the return URL is a choice among four
+  // fixed destinations (lib/auth-redirect.ts), never a path built from the
+  // request.
   if (!user) {
-    redirect("/connexion");
+    redirect(authUrl("/connexion", "/messagerie"));
   }
 
   if (id === user.id) {

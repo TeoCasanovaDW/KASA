@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import ArrowLeftIcon from "@/components/icons/ArrowLeftIcon";
 import Container from "@/components/layout/Container";
 import PropertyCard from "@/components/property/PropertyCard";
+import { authUrl } from "@/lib/auth-redirect";
 import { getProperties } from "@/lib/properties";
 import { ApiError } from "@/lib/api-client";
 import { getSessionUser } from "@/lib/session";
@@ -45,7 +46,7 @@ export default async function MesAnnoncesPage() {
   const user = await getSessionUser();
 
   if (!user) {
-    redirect("/connexion");
+    redirect(authUrl("/connexion", "/mes-annonces"));
   }
 
   if (user.role !== "owner" && user.role !== "admin") {

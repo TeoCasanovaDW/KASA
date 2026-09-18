@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { ApiError, isUnavailable } from "./api-client";
 import { login, register } from "./auth-api";
+import { safeNext } from "./auth-redirect";
 import { readField } from "./form-data";
 import { createSession, destroySession } from "./session";
 
@@ -11,6 +12,8 @@ export type AuthFormState = {
   formError?: string;
   fieldErrors?: Record<string, string>;
   values?: Record<string, string>;
+  /** Validated return URL, echoed back so a failed submit keeps it. */
+  next?: string;
 };
 
 /**
@@ -39,7 +42,8 @@ function readPassword(formData: FormData): string {
 /**
  * Server Action bound to the login form. Returns field or form errors to
  * redisplay the form; on success it creates the session cookie and redirects
- * to `/`, which never returns to the caller.
+ * to the form's `next` field — the page that sent the visitor here, `/` by
+ * default — which never returns to the caller.
  */
 export async function loginAction(
   prevState: AuthFormState,
@@ -48,6 +52,8 @@ export async function loginAction(
   const email = readField(formData, "email");
   const password = readPassword(formData);
   const values = { email };
+  // Read before any early return so a failed submit keeps the destination.
+  const next = safeNext(readField(formData, "next"));
 
   const fieldErrors: Record<string, string> = {};
 
@@ -63,7 +69,7 @@ export async function loginAction(
   }
 
   if (Object.keys(fieldErrors).length > 0) {
-    return { fieldErrors, values };
+    return { fieldErrors, values, next };
   }
 
   try {
@@ -71,7 +77,7 @@ export async function loginAction(
     await createSession(token);
   } catch (error) {
     if (isUnavailable(error)) {
-      return { formError: UNAVAILABLE, values };
+      return { formError: UNAVAILABLE, values, next };
     }
 
     const status = error instanceof ApiError ? error.status : null;
@@ -82,19 +88,20 @@ export async function loginAction(
           ? "Email ou mot de passe incorrect."
           : "La connexion a échoué. Réessayez plus tard.",
       values,
+      next,
     };
   }
 
   // Outside the try/catch: `redirect` signals by throwing, and a catch here
   // would swallow the navigation.
-  redirect("/");
+  redirect(next);
 }
 
 /**
  * Server Action bound to the registration form. Maps a 409 to an
  * email-already-used field error and a password-related 400 to the password
- * field. On success it creates the session cookie and redirects to `/`,
- * which never returns to the caller.
+ * field. On success it creates the session cookie and redirects to the form's
+ * `next` field (`/` by default), which never returns to the caller.
  */
 export async function registerAction(
   prevState: AuthFormState,
@@ -109,6 +116,7 @@ export async function registerAction(
   const role = readField(formData, "role") === "owner" ? "owner" : "client";
 
   const values = { nom, prenom, email, role };
+  const next = safeNext(readField(formData, "next"));
 
   // Collected in one pass, so a form with three problems shows all three
   // rather than one per round-trip.
@@ -139,7 +147,7 @@ export async function registerAction(
   }
 
   if (Object.keys(fieldErrors).length > 0) {
-    return { fieldErrors, values };
+    return { fieldErrors, values, next };
   }
 
   // French display order, inner whitespace collapsed.
@@ -150,13 +158,17 @@ export async function registerAction(
     await createSession(token);
   } catch (error) {
     if (isUnavailable(error)) {
-      return { formError: UNAVAILABLE, values };
+      return { formError: UNAVAILABLE, values, next };
     }
 
     const status = error instanceof ApiError ? error.status : null;
 
     if (status === 409) {
-      return { fieldErrors: { email: "Cet email est déjà utilisé." }, values };
+      return {
+        fieldErrors: { email: "Cet email est déjà utilisé." },
+        values,
+        next,
+      };
     }
 
     if (
@@ -164,16 +176,17 @@ export async function registerAction(
       error instanceof ApiError &&
       /password/i.test(error.message)
     ) {
-      return { fieldErrors: { password: SHORT_PASSWORD }, values };
+      return { fieldErrors: { password: SHORT_PASSWORD }, values, next };
     }
 
     return {
       formError: "L'inscription a échoué. Réessayez plus tard.",
       values,
+      next,
     };
   }
 
-  redirect("/");
+  redirect(next);
 }
 
 /** Server Action that clears the session cookie and redirects to `/`, which never returns to the caller. */

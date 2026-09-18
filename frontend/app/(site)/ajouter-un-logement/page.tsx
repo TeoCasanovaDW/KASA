@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import ArrowLeftIcon from "@/components/icons/ArrowLeftIcon";
 import Container from "@/components/layout/Container";
 import PropertyForm from "@/components/property/PropertyForm";
+import { authUrl } from "@/lib/auth-redirect";
 import { createPropertyAction } from "@/lib/property-actions";
 import { getSessionUser } from "@/lib/session";
 import { getUserTags } from "@/lib/tags-api";
@@ -37,7 +38,7 @@ export default async function AjouterUnLogementPage() {
   const user = await getSessionUser();
 
   if (!user) {
-    redirect("/connexion");
+    redirect(authUrl("/connexion", "/ajouter-un-logement"));
   }
 
   if (user.role !== "owner" && user.role !== "admin") {

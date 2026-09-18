@@ -7,8 +7,11 @@ import type { AuthFormState } from "@/lib/auth-actions";
 
 export default function RegisterForm({
   action,
+  next,
 }: {
   action: (state: AuthFormState, formData: FormData) => Promise<AuthFormState>;
+  /** Where to land once signed up. Already validated by the page. */
+  next?: string;
 }) {
   const [state, formAction, pending] = useActionState(action, {});
 
@@ -19,6 +22,9 @@ export default function RegisterForm({
 
   return (
     <form action={formAction} className="flex flex-col gap-5">
+      {/* The action re-validates it: a hidden input is a posted value like
+          any other. `state.next` keeps it across a failed submit. */}
+      <input type="hidden" name="next" value={state.next ?? next ?? ""} />
       <AuthField
         id="nom"
         name="nom"
