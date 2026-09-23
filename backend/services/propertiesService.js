@@ -134,7 +134,7 @@ async function createProperty(db, payload) {
 }
 
 async function updateProperty(db, id, changes) {
-  const allowed = ['title', 'description', 'cover', 'location', 'host_id', 'price_per_night'];
+  const allowed = ['title', 'description', 'cover', 'location', 'price_per_night'];
   const fields = [];
   const params = [];
 

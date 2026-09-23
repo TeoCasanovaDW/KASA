@@ -4,6 +4,7 @@ const {
   createProperty,
   updateProperty,
   deleteProperty,
+  getPropertyOwnerId,
   listTagsForOwner,
 } = require('../services/propertiesService');
 
@@ -11,6 +12,20 @@ function statusFromError(e) {
   if (e && e.status) return e.status;
   if (e && e.message && /(UNIQUE|PRIMARY KEY)/i.test(e.message)) return 409;
   return 500;
+}
+
+// Only the host can edit or delete their property, admins included (D16)
+async function checkHost(req, res) {
+  const ownerId = await getPropertyOwnerId(req.app.locals.db, req.params.id);
+  if (ownerId == null) {
+    res.status(404).json({ error: 'Property not found' });
+    return false;
+  }
+  if (String(ownerId) !== String(req.user.id)) {
+    res.status(403).json({ error: 'only the property host can do this' });
+    return false;
+  }
+  return true;
 }
 
 async function list(req, res) {
@@ -53,6 +68,7 @@ async function create(req, res) {
 async function update(req, res) {
   const db = req.app.locals.db;
   try {
+    if (!(await checkHost(req, res))) return;
     const updated = await updateProperty(db, req.params.id, req.body || {});
     res.json(updated);
   } catch (e) {
@@ -63,6 +79,7 @@ async function update(req, res) {
 async function remove(req, res) {
   const db = req.app.locals.db;
   try {
+    if (!(await checkHost(req, res))) return;
     await deleteProperty(db, req.params.id);
     res.status(204).end();
   } catch (e) {
