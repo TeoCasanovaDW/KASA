@@ -74,6 +74,23 @@ describe("DeletePropertyButton", () => {
     expect(deletePropertyAction).toHaveBeenCalledWith("abc123");
   });
 
+  it("renders the full variant as a labelled button that opens the dialog", async () => {
+    const user = userEvent.setup();
+    render(
+      <DeletePropertyButton
+        variant="full"
+        propertyId="abc123"
+        propertyTitle="Maison bord de mer"
+      />
+    );
+
+    await user.click(screen.getByRole("button", { name: "Supprimer l'annonce" }));
+
+    expect(
+      screen.getByRole("dialog", { name: "Supprimer cette annonce ?" })
+    ).toBeInTheDocument();
+  });
+
   it("keeps the dialog open and shows the error", async () => {
     vi.mocked(deletePropertyAction).mockResolvedValueOnce({
       error: "Vous ne pouvez supprimer que vos propres annonces.",

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import DeletePropertyButton from "@/components/property/DeletePropertyButton";
 import Avatar from "@/components/ui/Avatar";
 import type { PropertyHost } from "@/types/property";
 
@@ -8,14 +9,16 @@ export default function HostCard({
   host,
   ratingAvg,
   propertyId,
+  propertyTitle,
   currentUserId,
 }: {
   host: PropertyHost;
   ratingAvg: number;
   propertyId: string;
+  propertyTitle: string;
   currentUserId: number | null;
 }) {
-  // The host viewing their own listing has no one to message.
+  // The host viewing their own listing has no one to message, but can delete it.
   const isOwnListing = currentUserId !== null && currentUserId === host.id;
 
   return (
@@ -39,7 +42,15 @@ export default function HostCard({
 
       {/* Carries the property so the thread opens with it as the subject,
           overriding whatever the conversation was last about. */}
-      {!isOwnListing && (
+      {isOwnListing ? (
+        <div className="mt-6">
+          <DeletePropertyButton
+            variant="full"
+            propertyId={propertyId}
+            propertyTitle={propertyTitle}
+          />
+        </div>
+      ) : (
         <Link
           href={`/messagerie/${host.id}?logement=${propertyId}`}
           className="mt-6 block w-full rounded-xl bg-kasa-dark-orange py-3 text-center text-kasa-white"

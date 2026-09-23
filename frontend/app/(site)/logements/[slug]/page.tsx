@@ -167,6 +167,7 @@ export default async function PropertyPage({
               host={host}
               ratingAvg={property.rating_avg}
               propertyId={property.id}
+              propertyTitle={property.title}
               currentUserId={sessionUser?.id ?? null}
             />
           )}
