@@ -59,5 +59,10 @@ export async function apiFetch<T>(
     throw new ApiError(message, response.status);
   }
 
+  // No Content (e.g. DELETE /api/properties/:id): there is no body to parse.
+  if (response.status === 204) {
+    return undefined as T;
+  }
+
   return response.json() as Promise<T>;
 }

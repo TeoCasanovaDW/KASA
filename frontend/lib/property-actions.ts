@@ -3,9 +3,10 @@
 import { revalidatePath, updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { ApiError, isUnavailable } from "./api-client";
+import { authUrl } from "./auth-redirect";
 import { readField, readFile, readFiles, readStrings } from "./form-data";
 import { PROPERTIES_TAG } from "./properties";
-import { createProperty, uploadImage } from "./properties-api";
+import { createProperty, deleteProperty, uploadImage } from "./properties-api";
 import {
   composeLocation,
   dedupeTags,
@@ -15,12 +16,15 @@ import {
   validatePropertyForm,
 } from "./property-form";
 import { getSessionUser } from "./session";
+import type { Property } from "@/types/property";
 import type { PropertyFormState, PropertyFormValues } from "@/types/property-form";
 
 const OWNER_ONLY = "Seuls les comptes propriétaires peuvent ajouter un logement.";
 const UPLOAD_FAILED = "L'envoi des images a échoué. Réessayez.";
 const CREATE_FAILED = "La création a échoué. Réessayez plus tard.";
 const UNAVAILABLE = "Le service est indisponible. Réessayez plus tard.";
+const NOT_HOST = "Vous ne pouvez supprimer que vos propres annonces.";
+const DELETE_FAILED = "La suppression a échoué. Réessayez plus tard.";
 
 /**
  * Equipments are a closed list the form fully controls, so anything outside
@@ -162,4 +166,51 @@ export async function createPropertyAction(
   // Outside the try/catch: `redirect` signals by throwing, and a catch here
   // would swallow the navigation.
   redirect(`/logements/${slug}`);
+}
+
+/**
+ * Server Action behind the delete confirmation. A missing session, or one the
+ * backend no longer accepts (401), goes to the login page. A 404 means the
+ * property is already gone, which is the outcome the user asked for. On
+ * success it expires the cached property list, revalidates the pages that
+ * list properties, then redirects to `/mes-annonces`, which never returns to
+ * the caller. Any other failure comes back as `{ error }` so the dialog can
+ * stay open and show it.
+ */
+export async function deletePropertyAction(
+  id: Property["id"]
+): Promise<{ error: string }> {
+  const loginUrl = authUrl("/connexion", "/mes-annonces");
+  const user = await getSessionUser();
+
+  if (!user) {
+    redirect(loginUrl);
+  }
+
+  try {
+    await deleteProperty(id);
+  } catch (error) {
+    const status = error instanceof ApiError ? error.status : null;
+
+    if (status === 401) {
+      redirect(loginUrl);
+    }
+
+    if (status !== 404) {
+      if (isUnavailable(error)) {
+        return { error: UNAVAILABLE };
+      }
+
+      return { error: status === 403 ? NOT_HOST : DELETE_FAILED };
+    }
+  }
+
+  // Same read-your-own-writes reason as `createPropertyAction`: the deleted
+  // property must disappear from `/` on the very next request.
+  updateTag(PROPERTIES_TAG);
+  revalidatePath("/");
+  revalidatePath("/favoris");
+
+  // Outside the try/catch: `redirect` signals by throwing.
+  redirect("/mes-annonces");
 }

@@ -28,10 +28,17 @@ vi.mock("./session", () => ({
 vi.mock("./properties-api", () => ({
   uploadImage: vi.fn(async (file: File) => `/uploads/${file.name}`),
   createProperty: vi.fn(async () => ({ slug: "maison-bord-de-mer" })),
+  deleteProperty: vi.fn(async () => undefined),
 }));
 
-const { createProperty } = await import("./properties-api");
-const { createPropertyAction } = await import("./property-actions");
+const { revalidatePath, updateTag } = await import("next/cache");
+const { redirect } = await import("next/navigation");
+const { ApiError } = await import("./api-client");
+const { getSessionUser } = await import("./session");
+const { createProperty, deleteProperty } = await import("./properties-api");
+const { createPropertyAction, deletePropertyAction } = await import(
+  "./property-actions"
+);
 
 const image = (name: string) =>
   new File(["x"], name, { type: "image/jpeg" });
@@ -82,5 +89,68 @@ describe("createPropertyAction", () => {
     const payload = await submit(buildFormData([]));
 
     expect(payload.pictures).toEqual(["/uploads/cover.jpg"]);
+  });
+});
+
+describe("deletePropertyAction", () => {
+  it("deletes, refreshes the listings and lands on /mes-annonces", async () => {
+    await expect(deletePropertyAction("abc123")).rejects.toBe(REDIRECT);
+
+    expect(deleteProperty).toHaveBeenCalledWith("abc123");
+    expect(updateTag).toHaveBeenCalledWith("properties");
+    expect(revalidatePath).toHaveBeenCalledWith("/");
+    expect(revalidatePath).toHaveBeenCalledWith("/favoris");
+    expect(redirect).toHaveBeenCalledWith("/mes-annonces");
+  });
+
+  it("treats a property that is already gone (404) as deleted", async () => {
+    vi.mocked(deleteProperty).mockRejectedValueOnce(
+      new ApiError("Property not found", 404)
+    );
+
+    await expect(deletePropertyAction("abc123")).rejects.toBe(REDIRECT);
+
+    expect(redirect).toHaveBeenCalledWith("/mes-annonces");
+  });
+
+  it("explains a 403 without redirecting", async () => {
+    vi.mocked(deleteProperty).mockRejectedValueOnce(
+      new ApiError("only the property host can do this", 403)
+    );
+
+    await expect(deletePropertyAction("abc123")).resolves.toEqual({
+      error: "Vous ne pouvez supprimer que vos propres annonces.",
+    });
+    expect(redirect).not.toHaveBeenCalled();
+    expect(updateTag).not.toHaveBeenCalled();
+  });
+
+  it("reports an unreachable service", async () => {
+    vi.mocked(deleteProperty).mockRejectedValueOnce(
+      new ApiError("fetch failed", 0)
+    );
+
+    await expect(deletePropertyAction("abc123")).resolves.toEqual({
+      error: "Le service est indisponible. Réessayez plus tard.",
+    });
+  });
+
+  it("reports any other failure generically", async () => {
+    vi.mocked(deleteProperty).mockRejectedValueOnce(
+      new ApiError("No fields to update", 400)
+    );
+
+    await expect(deletePropertyAction("abc123")).resolves.toEqual({
+      error: "La suppression a échoué. Réessayez plus tard.",
+    });
+  });
+
+  it("sends a visitor without a session to the login page", async () => {
+    vi.mocked(getSessionUser).mockResolvedValueOnce(null);
+
+    await expect(deletePropertyAction("abc123")).rejects.toBe(REDIRECT);
+
+    expect(redirect).toHaveBeenCalledWith("/connexion?next=%2Fmes-annonces");
+    expect(deleteProperty).not.toHaveBeenCalled();
   });
 });

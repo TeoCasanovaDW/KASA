@@ -1,6 +1,6 @@
 import { apiFetch } from "./api-client";
 import { authInit } from "./api-auth";
-import type { PropertyDetail } from "@/types/property";
+import type { Property, PropertyDetail } from "@/types/property";
 
 // Server-only authenticated writes: the sibling of the public read module
 // `lib/properties.ts`, which stays unauthenticated and cached.
@@ -54,5 +54,18 @@ export async function createProperty(
       "Content-Type": "application/json",
     },
     body: JSON.stringify(input),
+  });
+}
+
+/**
+ * Wraps DELETE /api/properties/:id (204, no body). Host only: the backend
+ * answers 403 to anyone else and 404 once the property is gone (D16).
+ */
+export async function deleteProperty(id: Property["id"]): Promise<void> {
+  const init = await authInit();
+
+  await apiFetch(`/api/properties/${encodeURIComponent(id)}`, {
+    ...init,
+    method: "DELETE",
   });
 }
