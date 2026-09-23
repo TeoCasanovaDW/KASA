@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import ArrowLeftIcon from "@/components/icons/ArrowLeftIcon";
 import Container from "@/components/layout/Container";
+import DeletePropertyButton from "@/components/property/DeletePropertyButton";
 import PropertyCard from "@/components/property/PropertyCard";
 import { authUrl } from "@/lib/auth-redirect";
 import { getProperties } from "@/lib/properties";
@@ -109,7 +110,16 @@ export default async function MesAnnoncesPage() {
           <ul className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {properties.map((property) => (
               <li key={property.id}>
-                <PropertyCard property={property} />
+                <PropertyCard
+                  property={property}
+                  favoriteControl={
+                    <DeletePropertyButton
+                      variant="icon"
+                      propertyId={property.id}
+                      propertyTitle={property.title}
+                    />
+                  }
+                />
               </li>
             ))}
           </ul>
