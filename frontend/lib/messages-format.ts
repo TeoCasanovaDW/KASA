@@ -3,15 +3,19 @@ import type { ThreadMessage } from "@/types/message";
 // Pure formatting helpers, no React. French 24-hour times and lowercase month
 // names throughout, which diverges from the mockup's `11:04 am` /
 // `03 Septembre 2025` on purpose (see the spec's `## Mockup divergences`).
-// The API sends UTC ISO strings; formatting renders them in local time.
+// The API sends UTC ISO strings; formatting renders them in Paris time. The
+// zone is explicit because these pages render on the server, whose own zone is
+// UTC and would show every message two hours early.
 
 const LIST_TIME = new Intl.DateTimeFormat("fr-FR", {
+  timeZone: "Europe/Paris",
   hour: "2-digit",
   minute: "2-digit",
   hour12: false,
 });
 
 const DAY_SEPARATOR = new Intl.DateTimeFormat("fr-FR", {
+  timeZone: "Europe/Paris",
   day: "2-digit",
   month: "long",
   year: "numeric",
