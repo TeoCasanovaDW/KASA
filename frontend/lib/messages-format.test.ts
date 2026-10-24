@@ -7,12 +7,12 @@ import {
   truncate,
 } from "./messages-format";
 
-// The helpers turn a UTC ISO string into local-time French text, so the
-// fixtures are built from a local date and converted back with
-// `toISOString()`. The expectations then hold whatever `TZ` the machine runs
-// in, instead of only passing in UTC.
+// The helpers turn a UTC ISO string into Paris-time French text. In September
+// Paris is UTC+2, so the fixtures take a Paris time and subtract two hours to
+// get the UTC string. The expectations then hold whatever `TZ` the machine
+// runs in.
 function iso(day: number, hours: number, minutes: number): string {
-  return new Date(2025, 8, day, hours, minutes).toISOString();
+  return new Date(Date.UTC(2025, 8, day, hours - 2, minutes)).toISOString();
 }
 
 function message(id: number, createdAt: string): ThreadMessage {
